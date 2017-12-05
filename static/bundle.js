@@ -11,8 +11,9 @@ module.exports = {
   setupSnacks,
 }
 
+
 },{"./constants":2,"axios":12}],2:[function(require,module,exports){
-const baseURL = window.location.href.includes('127.0.0.1') ? 'http://localhost:3000' : ''
+const baseURL = 'http://localhost:3000'
 
 module.exports = {
   baseURL,
@@ -23,31 +24,32 @@ const { baseURL } = require('./constants')
 const axios = require('axios')
 
 function processLoginForm(e) {
-    if (e.preventDefault) e.preventDefault()
-    const email = e.srcElement[0].value
-    const password = e.srcElement[1].value
-    const rememberMe = e.srcElement[2].checked
-    axios.post(`${baseURL}/auth/login`, { email: email, password: password })
-        .then(result => {
-            window.localStorage.setItem('token', result.data.token)
-            window.location.href = '#/snacks'
-        })
-        .catch(err => {
-            console.error(err)
-        })
-    return false
+  if (e.preventDefault) e.preventDefault()
+  const email = e.srcElement[0].value
+  const password = e.srcElement[1].value
+  const rememberMe = e.srcElement[2].checked
+  axios.post(`${baseURL}/auth/login`, { email, password })
+    .then((result) => {
+      if (rememberMe) {
+        window.localStorage.setItem('token', result.data.token)
+      }
+      window.location.href = '#/snacks'
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+  return false
 }
 
-function setUpLoginForm () {
-    const form = document.getElementById('loginForm')
-    
-    if (form.attachEvent) form.attachEvent("submit", processLoginForm)
-    else form.addEventListener("submit", processLoginForm)
+function setUpLoginForm() {
+  const form = document.getElementById('loginForm')
+  if (form.attachEvent) form.attachEvent('submit', processLoginForm)
+  else form.addEventListener('submit', processLoginForm)
 }
 
 module.exports = {
-    processLoginForm,
-    setUpLoginForm,
+  processLoginForm,
+  setUpLoginForm,
 }
 
 },{"./constants":2,"axios":12}],4:[function(require,module,exports){
@@ -67,27 +69,38 @@ const { getSnack } = require('./viewOne')
 const mainContentDiv = document.getElementById('main-content')
 const navContentDiv = document.getElementById('nav-content')
 
-const token = window.localStorage.getItem('token')
-if (!token) {
-  mainContentDiv.innerHTML = registerTemplate()
-  setupRegisterForm()
+function setupHome() {
+  const token = window.localStorage.getItem('token')
+  if (!token) {
+    mainContentDiv.innerHTML = registerTemplate()
+    setupRegisterForm()
+  }
+  if (window.location.href.endsWith('/#/')) {
+    window.location.href = '/#/snacks'
+  } else if (window.location.href.includes('#/login')) {
+    mainContentDiv.innerHTML = loginFormTemplate()
+    setUpLoginForm()
+  } else if (window.location.href.endsWith('#/snacks')) {
+    navContentDiv.innerHTML = navbarTemplate()
+    setupSnacks().then((snacks) => {
+      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+    })
+  } else if (window.location.href.includes('#/snacks')) {
+    navContentDiv.innerHTML = navbarTemplate()
+    const snackId = window.location.href.split('/')[5]
+    getSnack(snackId).then((snack) => {
+      mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+    })
+  } else if (window.location.href.includes('#/logout')) {
+    window.localStorage.removeItem('token')
+    window.location.href = '#'
+    mainContentDiv.innerHTML = registerTemplate()
+    setupRegisterForm()
+  }
 }
 
-if (window.location.href.includes('#/login')) {
-  mainContentDiv.innerHTML = loginFormTemplate()
-  setUpLoginForm()
-} else if (window.location.href.endsWith('#/snacks')) {
-  navContentDiv.innerHTML = navbarTemplate()
-  setupSnacks().then((snacks) => {
-    mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-  })
-} else if (window.location.href.includes('#/snacks')) {
-  navContentDiv.innerHTML = navbarTemplate()
-  const snackId = window.location.href.split('/')[5]
-  getSnack(snackId).then((snack) => {
-    mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
-  })
-}
+setupHome()
+window.addEventListener('hashchange', setupHome, false)
 
 },{"./allSnacks":1,"./login":3,"./register":5,"./templates/allSnacks":6,"./templates/loginForm":7,"./templates/navbar":8,"./templates/registerForm":9,"./templates/viewOneSnack":10,"./viewOne":11}],5:[function(require,module,exports){
 const axios = require('axios')
@@ -193,7 +206,7 @@ function navbarTemplate() {
       </ul>
     </div>
     <div class='col-2'>
-      <a href=''>Log Out</a>
+      <a href='#/logout'>Log Out</a>
     </div>
   </div>
 </div>`
@@ -214,17 +227,17 @@ function registerTemplate() {
       <form id='signupForm'>
         <div class='inputLine'>
           <p>First Name: </p>
-          <input class='formInput' type='text' placeholder='First Name' value='asdf'>
+          <input class='formInput' type='text' placeholder='First Name' >
         </div>
         <div class='inputLine'>
           <p>Last Name: </p>
-          <input class='formInput' type='text' placeholder='Last Name' value='ghjkl'>
+          <input class='formInput' type='text' placeholder='Last Name' >
         </div>
         <div class='inputLine'>
-          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='asdf@example.com'>
+          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' >
         </div>
         <div class='inputLine'>
-          <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf'>
+          <p>Password: </p><input class='formInput' type='password' placeholder='Password' >
         </div>
         <input type='submit' class="btn btn-success" value='Sign up!'>
       </form>

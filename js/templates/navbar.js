@@ -9,7 +9,7 @@ function navbarTemplate() {
       </ul>
     </div>
     <div class='col-2'>
-      <a href=''>Log Out</a>
+      <a href='#/logout'>Log Out</a>
     </div>
   </div>
 </div>`

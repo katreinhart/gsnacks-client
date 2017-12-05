@@ -8,17 +8,17 @@ function registerTemplate() {
       <form id='signupForm'>
         <div class='inputLine'>
           <p>First Name: </p>
-          <input class='formInput' type='text' placeholder='First Name' value='asdf'>
+          <input class='formInput' type='text' placeholder='First Name' >
         </div>
         <div class='inputLine'>
           <p>Last Name: </p>
-          <input class='formInput' type='text' placeholder='Last Name' value='ghjkl'>
+          <input class='formInput' type='text' placeholder='Last Name' >
         </div>
         <div class='inputLine'>
-          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='asdf@example.com'>
+          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' >
         </div>
         <div class='inputLine'>
-          <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf'>
+          <p>Password: </p><input class='formInput' type='password' placeholder='Password' >
         </div>
         <input type='submit' class="btn btn-success" value='Sign up!'>
       </form>
