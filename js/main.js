@@ -9,6 +9,8 @@ const { loginFormTemplate } = require('./templates/loginForm')
 const { navbarTemplate } = require('./templates/navbar')
 const { allSnacksTemplate } = require('./templates/allSnacks')
 
+const { setupSnacks } = require('./allSnacks')
+
 const mainContentDiv = document.getElementById('main-content')
 const navContentDiv = document.getElementById('nav-content')
 
@@ -22,9 +24,9 @@ if (!token) {
 if (window.location.href.includes('#/login')) {
   mainContentDiv.innerHTML = loginFormTemplate()
   setUpLoginForm()
-}
-
-else {
+} else {
   navContentDiv.innerHTML = navbarTemplate()
-  mainContentDiv.innerHTML = allSnacksTemplate()
+  setupSnacks().then((snacks) => {
+    mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+  })
 }

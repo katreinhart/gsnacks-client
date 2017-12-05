@@ -1,11 +1,25 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+const { baseURL } = require('./constants')
+
+
+function setupSnacks() {
+  return axios.get(`${baseURL}/api/snacks`)
+    .then(result => result.data.snacks)
+}
+
+module.exports = {
+  setupSnacks,
+}
+
+
+},{"./constants":2}],2:[function(require,module,exports){
 const baseURL = window.location.href.includes('127.0.0.1') ? 'http://localhost:3000' : ''
 
 module.exports = {
   baseURL,
 }
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 const { baseURL } = require('./constants')
 
 function processLoginForm(e) {
@@ -37,7 +51,7 @@ module.exports = {
     setUpLoginForm,
 }
 
-},{"./constants":1}],3:[function(require,module,exports){
+},{"./constants":2}],4:[function(require,module,exports){
 // const { baseURL } = require('./constants')
 
 const { setupRegisterForm } = require('./register')
@@ -48,6 +62,8 @@ const { loginFormTemplate } = require('./templates/loginForm')
 
 const { navbarTemplate } = require('./templates/navbar')
 const { allSnacksTemplate } = require('./templates/allSnacks')
+
+const { setupSnacks } = require('./allSnacks')
 
 const mainContentDiv = document.getElementById('main-content')
 const navContentDiv = document.getElementById('nav-content')
@@ -62,14 +78,14 @@ if (!token) {
 if (window.location.href.includes('#/login')) {
   mainContentDiv.innerHTML = loginFormTemplate()
   setUpLoginForm()
-}
-
-else {
+} else {
   navContentDiv.innerHTML = navbarTemplate()
-  mainContentDiv.innerHTML = allSnacksTemplate()
+  setupSnacks().then((snacks) => {
+    mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+  })
 }
 
-},{"./login":2,"./register":4,"./templates/allSnacks":5,"./templates/loginForm":6,"./templates/navbar":7,"./templates/registerForm":8}],4:[function(require,module,exports){
+},{"./allSnacks":1,"./login":3,"./register":5,"./templates/allSnacks":6,"./templates/loginForm":7,"./templates/navbar":8,"./templates/registerForm":9}],5:[function(require,module,exports){
 const { baseURL } = require('./constants')
 
 function processRegisterForm(e) {
@@ -102,8 +118,20 @@ module.exports = {
     setupRegisterForm,
 }
 
-},{"./constants":1}],5:[function(require,module,exports){
-function allSnacksTemplate() {
+},{"./constants":2}],6:[function(require,module,exports){
+function allSnacksTemplate(snacks) {
+  const snackDivContent = snacks.map(snack => `<div class='row allSnackRow'> <div class='row'>
+        <div class='col-8'>
+          <p><a href='#/snacks/${snack.id}'>${snack.name}</a></p>
+          <p>Average User Rating: <strong>5</strong></p>
+          <p>Price: <strong>${snack.price}</strong></p>
+          <p>Description: <strong>${snack.description}</strong></p>
+        </div>
+        <div class='col-4'>
+          <img src='${snack.img}' width=250 alt='a picture of ${snack.name}'>
+        </div>
+      </div></div>`).join('')
+      
   return `<div class='container-fluid mainBody'>
   <div class='row allSnackRow'>
     <div class='col-12'>
@@ -111,63 +139,14 @@ function allSnacksTemplate() {
     </div>
   </div>
 
-  <div class='row allSnackRow'>
-    <div class='row'>
-      <div class='col-8'>
-        <p>Snack Title!</p>
-        <p>Average User Rating: <strong>5</strong></p>
-        <p>Price: <strong>$4.99</strong></p>
-        <p>Description: <strong>Gingerbread cake jelly pudding jelly beans. Fruitcake gingerbread wafer wafer gingerbread apple pie marshmallow. Biscuit jelly cookie dragée brownie dessert carrot cake macaroon bonbon. Unerdwear.com liquorice marshmallow fruitcake caramels dessert gingerbread. </strong></p>
-      </div>
-      <div class='col-4'>
-        <p>Replace with img of snack</p>
-      </div>
-    </div>
-    <div class='row'>
-      <div class='col-8'>
-        <ul>
-          <a href=''><li>View</li></a>
-          <a href=''><li>Edit</li></a>
-          <a href=''><li>Delete</li></a>
-        </ul>
-      </div>
-      <div class='col-4'>
-      </div>
-    </div>
-  </div>
-
-  <div class='row allSnackRow'>
-    <div class='row'>
-      <div class='col-8'>
-        <p>Snack Title!</p>
-        <p>Average User Rating: <strong>5</strong></p>
-        <p>Price: <strong>$4.99</strong></p>
-        <p>Description: <strong>Gingerbread cake jelly pudding jelly beans. Fruitcake gingerbread wafer wafer gingerbread apple pie marshmallow. Biscuit jelly cookie dragée brownie dessert carrot cake macaroon bonbon. Unerdwear.com liquorice marshmallow fruitcake caramels dessert gingerbread. </strong></p>
-      </div>
-      <div class='col-4'>
-        <p>Replace with img of snack</p>
-      </div>
-    </div>
-    <div class='row'>
-      <div class='col-8'>
-        <ul>
-          <a href=''><li>View</li></a>
-          <a href=''><li>Edit</li></a>
-          <a href=''><li>Delete</li></a>
-        </ul>
-      </div>
-      <div class='col-4'>
-      </div>
-    </div>
-  </div>
-</div>`
+  ${snackDivContent}`
 }
 
 module.exports = {
   allSnacksTemplate,
 }
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 function loginFormTemplate() {
   return `
@@ -195,7 +174,7 @@ module.exports = {
   loginFormTemplate,
 }
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 function navbarTemplate() {
   return `<div class='container-fluid navigation'>
   <div class='row'>
@@ -217,7 +196,7 @@ module.exports = {
   navbarTemplate,
 }
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 
 function registerTemplate() {
   return `<div class='signupBox'>
@@ -249,4 +228,4 @@ module.exports = {
   registerTemplate,
 }
 
-},{}]},{},[3]);
+},{}]},{},[4]);
