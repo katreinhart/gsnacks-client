@@ -20,8 +20,9 @@ function registerTemplate() {
         <div class='inputLine'>
           <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf'>
         </div>
-        <input type='submit' value='Sign up!'>
+        <input type='submit' class="btn btn-success" value='Sign up!'>
       </form>
+      <button class="btn btn-info btn-sm" id="login">Already signed up? Login here.</button>
     </div>`
 }
 
