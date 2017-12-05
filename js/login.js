@@ -1,19 +1,30 @@
-const baseURL = 'localhost:3000'
+const { baseURL } = require('./constants')
 
-function processForm(e) {
+function processLoginForm(e) {
     if (e.preventDefault) e.preventDefault()
     const email = e.srcElement[0].value
     const password = e.srcElement[1].value
     const rememberMe = e.srcElement[2].checked
-
-    axios.post(`${baseURL}/login`, { email: email, password: password })
+    console.log({ email, password })
+    axios.post(`${baseURL}/auth/login`, { email: email, password: password })
         .then(result => {
-            
+            window.localStorage.setItem('token', result.data.token)
+            window.location.href = '#/snacks'
+        })
+        .catch(err => {
+            console.error(err)
         })
     return false
 }
 
-var form = document.getElementById('loginForm')
+function setUpLoginForm () {
+    const form = document.getElementById('loginForm')
+    
+    if (form.attachEvent) form.attachEvent("submit", processLoginForm)
+    else form.addEventListener("submit", processLoginForm)
+}
 
-if (form.attachEvent) form.attachEvent("submit", processForm)
-else form.addEventListener("submit", processForm)
+module.exports = {
+    processLoginForm,
+    setUpLoginForm,
+}
