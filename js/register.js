@@ -1,5 +1,4 @@
-const axios = require('axios')
-const { baseURL } = require('./constants')
+const userRequests = require('./requests/users')
 
 function processRegisterForm(e) {
   if (e.preventDefault) e.preventDefault()
@@ -8,14 +7,13 @@ function processRegisterForm(e) {
   const email = e.srcElement[2].value
   const password = e.srcElement[3].value
 
-  axios.post(`${baseURL}/auth/register`, { first_name: fname, last_name: lname, email, password })
+  userRequests.register({ first_name: fname, last_name: lname, email, password })
     .then((result) => {
       window.location.href = '#/login'
     })
     .catch((err) => {
-      console.error(err)             
+      console.error(err)
     })
-  return false
 }
 
 function setupRegisterForm() {

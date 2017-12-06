@@ -1,12 +1,10 @@
-const { baseURL } = require('./constants')
-const axios = require('axios')
+const snackRequests = require('./requests/snacks')
 
 function setupSnacks() {
-  return axios.get(`${baseURL}/api/snacks`)
+  return snackRequests.getAll()
     .then(result => result.data.snacks)
 }
 
 module.exports = {
   setupSnacks,
 }
-

@@ -1,17 +1,20 @@
-window.Snacks = {
-    getAll(){
+const { baseURL } = require('../constants')
+const axios = require('axios')
+
+module.exports = {
+    getAll() {
         return axios.get(`${baseURL}/api/snacks`)
     },
-    find(id){
+    find(id) {
         return axios.get(`${baseURL}/api/snacks/${id}`)
     },
-    create(body){
+    create(body) {
         return axios.post(`${baseURL}/api/snacks`, body)
     },
-    update(body){
+    update(id, body) {
         return axios.put(`${baseURL}/api/snacks/${id}`, body)
     },
-    delete(id){
+    delete(id) {
         return axios.delete(`${baseURL}/api/snacks/${id}`)
     }
     

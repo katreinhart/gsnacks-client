@@ -1,12 +1,11 @@
-const { baseURL } = require('./constants')
-const axios = require('axios')
+const userRequests = require('./requests/users')
 
 function processLoginForm(e) {
   if (e.preventDefault) e.preventDefault()
   const email = e.srcElement[0].value
   const password = e.srcElement[1].value
   const rememberMe = e.srcElement[2].checked
-  axios.post(`${baseURL}/auth/login`, { email, password })
+  userRequests.login({ email, password })
     .then((result) => {
       if (rememberMe) {
         window.localStorage.setItem('token', result.data.token)
