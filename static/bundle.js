@@ -1,9 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-const { baseURL } = require('./constants')
-const axios = require('axios')
+const snackRequests = require('./requests/snacks')
 
 function setupSnacks() {
-  return axios.get(`${baseURL}/api/snacks`)
+  return snackRequests.getAll()
     .then(result => result.data.snacks)
 }
 
@@ -11,8 +10,7 @@ module.exports = {
   setupSnacks,
 }
 
-
-},{"./constants":2,"axios":12}],2:[function(require,module,exports){
+},{"./requests/snacks":6}],2:[function(require,module,exports){
 const baseURL = 'http://localhost:3000'
 
 module.exports = {
@@ -20,15 +18,14 @@ module.exports = {
 }
 
 },{}],3:[function(require,module,exports){
-const { baseURL } = require('./constants')
-const axios = require('axios')
+const userRequests = require('./requests/users')
 
 function processLoginForm(e) {
   if (e.preventDefault) e.preventDefault()
   const email = e.srcElement[0].value
   const password = e.srcElement[1].value
   const rememberMe = e.srcElement[2].checked
-  axios.post(`${baseURL}/auth/login`, { email, password })
+  userRequests.login({ email, password })
     .then((result) => {
       if (rememberMe) {
         window.localStorage.setItem('token', result.data.token)
@@ -52,7 +49,7 @@ module.exports = {
   setUpLoginForm,
 }
 
-},{"./constants":2,"axios":12}],4:[function(require,module,exports){
+},{"./requests/users":7}],4:[function(require,module,exports){
 const { setupRegisterForm } = require('./register')
 const { setUpLoginForm } = require('./login')
 
@@ -66,8 +63,12 @@ const { setupSnacks } = require('./allSnacks')
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
 const { getSnack } = require('./viewOne')
 
+const usersRequests = require('./requests/users')
+
 const mainContentDiv = document.getElementById('main-content')
 const navContentDiv = document.getElementById('nav-content')
+
+let token = window.localStorage.getItem('token')
 
 function setupHome() {
   const token = window.localStorage.getItem('token')
@@ -97,14 +98,25 @@ function setupHome() {
     mainContentDiv.innerHTML = registerTemplate()
     setupRegisterForm()
   }
+  // These next routes are for testing purposes only, not permanent. 
+  else if (window.location.href.endsWith('#/users')) {
+    console.log('users routes')
+    usersRequests.getAll(token).then((result) => {
+      console.log(result)
+    }).catch(console.error)
+  } else if (window.location.href.includes('#/users')) {
+    const userId = window.location.href.split('/')[5]
+    usersRequests.find(userId).then((result) => {
+      console.log(result)
+    })
+  }
 }
 
 setupHome()
 window.addEventListener('hashchange', setupHome, false)
 
-},{"./allSnacks":1,"./login":3,"./register":5,"./templates/allSnacks":6,"./templates/loginForm":7,"./templates/navbar":8,"./templates/registerForm":9,"./templates/viewOneSnack":10,"./viewOne":11}],5:[function(require,module,exports){
-const axios = require('axios')
-const { baseURL } = require('./constants')
+},{"./allSnacks":1,"./login":3,"./register":5,"./requests/users":7,"./templates/allSnacks":8,"./templates/loginForm":9,"./templates/navbar":10,"./templates/registerForm":11,"./templates/viewOneSnack":12,"./viewOne":13}],5:[function(require,module,exports){
+const userRequests = require('./requests/users')
 
 function processRegisterForm(e) {
   if (e.preventDefault) e.preventDefault()
@@ -113,14 +125,13 @@ function processRegisterForm(e) {
   const email = e.srcElement[2].value
   const password = e.srcElement[3].value
 
-  axios.post(`${baseURL}/auth/register`, { first_name: fname, last_name: lname, email, password })
+  userRequests.register({ first_name: fname, last_name: lname, email, password })
     .then((result) => {
       window.location.href = '#/login'
     })
     .catch((err) => {
-      console.error(err)             
+      console.error(err)
     })
-  return false
 }
 
 function setupRegisterForm() {
@@ -138,7 +149,62 @@ module.exports = {
   setupRegisterForm,
 }
 
-},{"./constants":2,"axios":12}],6:[function(require,module,exports){
+},{"./requests/users":7}],6:[function(require,module,exports){
+const { baseURL } = require('../constants')
+const axios = require('axios')
+
+module.exports = {
+    getAll() {
+        return axios.get(`${baseURL}/api/snacks`)
+    },
+    find(id) {
+        return axios.get(`${baseURL}/api/snacks/${id}`)
+    },
+    create(body, token) {
+        return axios.post(`${baseURL}/api/snacks`, body, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+    },
+    update(id, body, token) {
+        return axios.put(`${baseURL}/api/snacks/${id}`, body, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+    },
+    delete(id, token) {
+        return axios.delete(`${baseURL}/api/snacks/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+    }
+    
+}
+},{"../constants":2,"axios":14}],7:[function(require,module,exports){
+const {baseURL} = require('../constants')
+const axios = require('axios')
+
+module.exports = {
+    getAll(token) {
+        return axios.get(`${baseURL}/api/users`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+    },
+    find(id) {
+        return axios.get(`${baseURL}/api/users/${id}`)
+    },
+    edit(id, body) {
+        return axios.patch(`${baseURL}/api/users/${id}`, body)
+    },
+    delete(id) {
+        return axios.delete(`${baseURL}/api/users/${id}`)
+    },
+    register(body) {
+        return axios.post(`${baseURL}/auth/register`, body)
+    },
+    login(body) {
+        return axios.post(`${baseURL}/auth/login`, body)
+    },
+}
+
+},{"../constants":2,"axios":14}],8:[function(require,module,exports){
 function allSnacksTemplate(snacks) {
   const snackDivContent = snacks.map(snack => `<div class='row allSnackRow'> <div class='row'>
         <div class='col-8'>
@@ -166,7 +232,7 @@ module.exports = {
   allSnacksTemplate,
 }
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 
 function loginFormTemplate() {
   return `
@@ -194,7 +260,7 @@ module.exports = {
   loginFormTemplate,
 }
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 function navbarTemplate() {
   return `<div class='container-fluid navigation'>
   <div class='row'>
@@ -216,7 +282,7 @@ module.exports = {
   navbarTemplate,
 }
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 function registerTemplate() {
   return `<div class='signupBox'>
@@ -249,7 +315,7 @@ module.exports = {
   registerTemplate,
 }
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
 function viewOneSnackTemplate(snack) {
   return `<div class='infoBox title'>
@@ -293,12 +359,11 @@ module.exports = {
   viewOneSnackTemplate,
 }
 
-},{}],11:[function(require,module,exports){
-const { baseURL } = require('./constants')
-const axios = require('axios')
+},{}],13:[function(require,module,exports){
+const snackRequests = require('./requests/snacks')
 
 function getSnack(id) {
-  return axios.get(`${baseURL}/api/snacks/${id}`)
+  return snackRequests.getSnack(id)
     .then(result => result.data.snacks)
 }
 
@@ -306,9 +371,9 @@ module.exports = {
   getSnack,
 }
 
-},{"./constants":2,"axios":12}],12:[function(require,module,exports){
+},{"./requests/snacks":6}],14:[function(require,module,exports){
 module.exports = require('./lib/axios');
-},{"./lib/axios":14}],13:[function(require,module,exports){
+},{"./lib/axios":16}],15:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -492,7 +557,7 @@ module.exports = function xhrAdapter(config) {
 };
 
 }).call(this,require('_process'))
-},{"../core/createError":20,"./../core/settle":23,"./../helpers/btoa":27,"./../helpers/buildURL":28,"./../helpers/cookies":30,"./../helpers/isURLSameOrigin":32,"./../helpers/parseHeaders":34,"./../utils":36,"_process":38}],14:[function(require,module,exports){
+},{"../core/createError":22,"./../core/settle":25,"./../helpers/btoa":29,"./../helpers/buildURL":30,"./../helpers/cookies":32,"./../helpers/isURLSameOrigin":34,"./../helpers/parseHeaders":36,"./../utils":38,"_process":40}],16:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -546,7 +611,7 @@ module.exports = axios;
 // Allow use of default import syntax in TypeScript
 module.exports.default = axios;
 
-},{"./cancel/Cancel":15,"./cancel/CancelToken":16,"./cancel/isCancel":17,"./core/Axios":18,"./defaults":25,"./helpers/bind":26,"./helpers/spread":35,"./utils":36}],15:[function(require,module,exports){
+},{"./cancel/Cancel":17,"./cancel/CancelToken":18,"./cancel/isCancel":19,"./core/Axios":20,"./defaults":27,"./helpers/bind":28,"./helpers/spread":37,"./utils":38}],17:[function(require,module,exports){
 'use strict';
 
 /**
@@ -567,7 +632,7 @@ Cancel.prototype.__CANCEL__ = true;
 
 module.exports = Cancel;
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 var Cancel = require('./Cancel');
@@ -626,14 +691,14 @@ CancelToken.source = function source() {
 
 module.exports = CancelToken;
 
-},{"./Cancel":15}],17:[function(require,module,exports){
+},{"./Cancel":17}],19:[function(require,module,exports){
 'use strict';
 
 module.exports = function isCancel(value) {
   return !!(value && value.__CANCEL__);
 };
 
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 var defaults = require('./../defaults');
@@ -714,7 +779,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = Axios;
 
-},{"./../defaults":25,"./../utils":36,"./InterceptorManager":19,"./dispatchRequest":21}],19:[function(require,module,exports){
+},{"./../defaults":27,"./../utils":38,"./InterceptorManager":21,"./dispatchRequest":23}],21:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -768,7 +833,7 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 module.exports = InterceptorManager;
 
-},{"./../utils":36}],20:[function(require,module,exports){
+},{"./../utils":38}],22:[function(require,module,exports){
 'use strict';
 
 var enhanceError = require('./enhanceError');
@@ -788,7 +853,7 @@ module.exports = function createError(message, config, code, request, response) 
   return enhanceError(error, config, code, request, response);
 };
 
-},{"./enhanceError":22}],21:[function(require,module,exports){
+},{"./enhanceError":24}],23:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -876,7 +941,7 @@ module.exports = function dispatchRequest(config) {
   });
 };
 
-},{"../cancel/isCancel":17,"../defaults":25,"./../helpers/combineURLs":29,"./../helpers/isAbsoluteURL":31,"./../utils":36,"./transformData":24}],22:[function(require,module,exports){
+},{"../cancel/isCancel":19,"../defaults":27,"./../helpers/combineURLs":31,"./../helpers/isAbsoluteURL":33,"./../utils":38,"./transformData":26}],24:[function(require,module,exports){
 'use strict';
 
 /**
@@ -899,7 +964,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
   return error;
 };
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 var createError = require('./createError');
@@ -927,7 +992,7 @@ module.exports = function settle(resolve, reject, response) {
   }
 };
 
-},{"./createError":20}],24:[function(require,module,exports){
+},{"./createError":22}],26:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -949,7 +1014,7 @@ module.exports = function transformData(data, headers, fns) {
   return data;
 };
 
-},{"./../utils":36}],25:[function(require,module,exports){
+},{"./../utils":38}],27:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -1045,7 +1110,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 }).call(this,require('_process'))
-},{"./adapters/http":13,"./adapters/xhr":13,"./helpers/normalizeHeaderName":33,"./utils":36,"_process":38}],26:[function(require,module,exports){
+},{"./adapters/http":15,"./adapters/xhr":15,"./helpers/normalizeHeaderName":35,"./utils":38,"_process":40}],28:[function(require,module,exports){
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -1058,7 +1123,7 @@ module.exports = function bind(fn, thisArg) {
   };
 };
 
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 // btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
@@ -1096,7 +1161,7 @@ function btoa(input) {
 
 module.exports = btoa;
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1166,7 +1231,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
   return url;
 };
 
-},{"./../utils":36}],29:[function(require,module,exports){
+},{"./../utils":38}],31:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1182,7 +1247,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
     : baseURL;
 };
 
-},{}],30:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1237,7 +1302,7 @@ module.exports = (
   })()
 );
 
-},{"./../utils":36}],31:[function(require,module,exports){
+},{"./../utils":38}],33:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1253,7 +1318,7 @@ module.exports = function isAbsoluteURL(url) {
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 };
 
-},{}],32:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1323,7 +1388,7 @@ module.exports = (
   })()
 );
 
-},{"./../utils":36}],33:[function(require,module,exports){
+},{"./../utils":38}],35:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -1337,7 +1402,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
   });
 };
 
-},{"../utils":36}],34:[function(require,module,exports){
+},{"../utils":38}],36:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1392,7 +1457,7 @@ module.exports = function parseHeaders(headers) {
   return parsed;
 };
 
-},{"./../utils":36}],35:[function(require,module,exports){
+},{"./../utils":38}],37:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1421,7 +1486,7 @@ module.exports = function spread(callback) {
   };
 };
 
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 var bind = require('./helpers/bind');
@@ -1726,7 +1791,7 @@ module.exports = {
   trim: trim
 };
 
-},{"./helpers/bind":26,"is-buffer":37}],37:[function(require,module,exports){
+},{"./helpers/bind":28,"is-buffer":39}],39:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -1749,7 +1814,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 

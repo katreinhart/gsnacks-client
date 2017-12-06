@@ -1,17 +1,24 @@
-window.Reviews = {
-    getAll(){
+const axios = require('axios')
+const { baseURL } = require('../constants')
+
+module.exports = {
+    getAll() {
         return axios.get(`${baseURL}/api/reviews`)
     },
-    find(id){
+    find(id) {
         return axios.get(`${baseURL}/api/reviews/${id}`)
     },
-    create(body){
-        return axios.post(`${baseURL}/api/reviews`, body)
+    create(body, token) {
+        return axios.post(`${baseURL}/api/reviews`, body, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
     },
-    update(body){
-        return axios.put(`${baseURL}/api/reviews/${id}`, body)
+    update(id, body, token) {
+        return axios.put(`${baseURL}/api/reviews/${id}`, body, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
     },
-    delete(id){
+    delete(id, token) {
         return axios.delete(`${baseURL}/api/reviews/${id}`)
     }
 }

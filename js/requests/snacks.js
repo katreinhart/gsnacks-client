@@ -8,14 +8,20 @@ module.exports = {
     find(id) {
         return axios.get(`${baseURL}/api/snacks/${id}`)
     },
-    create(body) {
-        return axios.post(`${baseURL}/api/snacks`, body)
+    create(body, token) {
+        return axios.post(`${baseURL}/api/snacks`, body, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
     },
-    update(id, body) {
-        return axios.put(`${baseURL}/api/snacks/${id}`, body)
+    update(id, body, token) {
+        return axios.put(`${baseURL}/api/snacks/${id}`, body, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
     },
-    delete(id) {
-        return axios.delete(`${baseURL}/api/snacks/${id}`)
+    delete(id, token) {
+        return axios.delete(`${baseURL}/api/snacks/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
     }
     
 }
