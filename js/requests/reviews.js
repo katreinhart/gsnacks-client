@@ -8,6 +8,12 @@ module.exports = {
     find(id) {
         return axios.get(`${baseURL}/api/reviews/${id}`)
     },
+    getAllForSnack(snackId) {
+        return axios.get(`${baseURL}/api/snacks/${snackId}/reviews`)
+    }, 
+    getAllForUser(userId) {
+        return axios.get(`${baseURL}/api/users/${userId}/reviews`)
+    },
     create(body, token) {
         return axios.post(`${baseURL}/api/reviews`, body, {
             headers: { Authorization: `Bearer ${token}` },

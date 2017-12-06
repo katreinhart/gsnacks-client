@@ -11,7 +11,9 @@ const { setupSnacks } = require('./allSnacks')
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
 const { getSnack } = require('./viewOne')
 
+// these two routes are used for testing purposes only; will be refactored out
 const usersRequests = require('./requests/users')
+const reviewsRequests = require('./requests/reviews')
 
 const mainContentDiv = document.getElementById('main-content')
 const navContentDiv = document.getElementById('nav-content')
@@ -50,13 +52,24 @@ function setupHome() {
   else if (window.location.href.endsWith('#/users')) {
     console.log('users routes')
     usersRequests.getAll(token).then((result) => {
-      console.log(result)
-    }).catch(console.error)
+      console.log(result.data.id)
+    }).catch((error) => {
+      console.log(error)
+    })
   } else if (window.location.href.includes('#/users')) {
     const userId = window.location.href.split('/')[5]
-    usersRequests.find(userId).then((result) => {
-      console.log(result)
-    })
+    if (window.location.href.split('/')[6]) {
+      reviewsRequests.getAllForUser(userId).then((result) => {
+        console.log(result.data.reviews)
+      })
+    } else {
+      usersRequests.find(userId).then((result) => {
+        console.log(result.data.user)
+      })
+    }
+  } else if (window.location.href.includes('#/reviews')) {
+    console.log('reviews routes') 
+
   }
 }
 

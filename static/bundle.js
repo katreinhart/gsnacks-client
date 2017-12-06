@@ -10,7 +10,7 @@ module.exports = {
   setupSnacks,
 }
 
-},{"./requests/snacks":6}],2:[function(require,module,exports){
+},{"./requests/snacks":7}],2:[function(require,module,exports){
 const baseURL = 'http://localhost:3000'
 
 module.exports = {
@@ -49,7 +49,7 @@ module.exports = {
   setUpLoginForm,
 }
 
-},{"./requests/users":7}],4:[function(require,module,exports){
+},{"./requests/users":8}],4:[function(require,module,exports){
 const { setupRegisterForm } = require('./register')
 const { setUpLoginForm } = require('./login')
 
@@ -63,7 +63,9 @@ const { setupSnacks } = require('./allSnacks')
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
 const { getSnack } = require('./viewOne')
 
+// these two routes are used for testing purposes only; will be refactored out
 const usersRequests = require('./requests/users')
+const reviewsRequests = require('./requests/reviews')
 
 const mainContentDiv = document.getElementById('main-content')
 const navContentDiv = document.getElementById('nav-content')
@@ -102,20 +104,31 @@ function setupHome() {
   else if (window.location.href.endsWith('#/users')) {
     console.log('users routes')
     usersRequests.getAll(token).then((result) => {
-      console.log(result)
-    }).catch(console.error)
+      console.log(result.data.id)
+    }).catch((error) => {
+      console.log(error)
+    })
   } else if (window.location.href.includes('#/users')) {
     const userId = window.location.href.split('/')[5]
-    usersRequests.find(userId).then((result) => {
-      console.log(result)
-    })
+    if (window.location.href.split('/')[6]) {
+      reviewsRequests.getAllForUser(userId).then((result) => {
+        console.log(result.data.reviews)
+      })
+    } else {
+      usersRequests.find(userId).then((result) => {
+        console.log(result.data.user)
+      })
+    }
+  } else if (window.location.href.includes('#/reviews')) {
+    console.log('reviews routes') 
+
   }
 }
 
 setupHome()
 window.addEventListener('hashchange', setupHome, false)
 
-},{"./allSnacks":1,"./login":3,"./register":5,"./requests/users":7,"./templates/allSnacks":8,"./templates/loginForm":9,"./templates/navbar":10,"./templates/registerForm":11,"./templates/viewOneSnack":12,"./viewOne":13}],5:[function(require,module,exports){
+},{"./allSnacks":1,"./login":3,"./register":5,"./requests/reviews":6,"./requests/users":8,"./templates/allSnacks":9,"./templates/loginForm":10,"./templates/navbar":11,"./templates/registerForm":12,"./templates/viewOneSnack":13,"./viewOne":14}],5:[function(require,module,exports){
 const userRequests = require('./requests/users')
 
 function processRegisterForm(e) {
@@ -149,7 +162,40 @@ module.exports = {
   setupRegisterForm,
 }
 
-},{"./requests/users":7}],6:[function(require,module,exports){
+},{"./requests/users":8}],6:[function(require,module,exports){
+const axios = require('axios')
+const { baseURL } = require('../constants')
+
+module.exports = {
+    getAll() {
+        return axios.get(`${baseURL}/api/reviews`)
+    },
+    find(id) {
+        return axios.get(`${baseURL}/api/reviews/${id}`)
+    },
+    getAllForSnack(snackId) {
+        return axios.get(`${baseURL}/api/snacks/${snackId}/reviews`)
+    }, 
+    getAllForUser(userId) {
+        return axios.get(`${baseURL}/api/users/${userId}/reviews`)
+    },
+    create(body, token) {
+        return axios.post(`${baseURL}/api/reviews`, body, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+    },
+    update(id, body, token) {
+        return axios.put(`${baseURL}/api/reviews/${id}`, body, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+    },
+    delete(id, token) {
+        return axios.delete(`${baseURL}/api/reviews/${id}`)
+    }
+}
+
+
+},{"../constants":2,"axios":15}],7:[function(require,module,exports){
 const { baseURL } = require('../constants')
 const axios = require('axios')
 
@@ -177,7 +223,7 @@ module.exports = {
     }
     
 }
-},{"../constants":2,"axios":14}],7:[function(require,module,exports){
+},{"../constants":2,"axios":15}],8:[function(require,module,exports){
 const {baseURL} = require('../constants')
 const axios = require('axios')
 
@@ -204,7 +250,7 @@ module.exports = {
     },
 }
 
-},{"../constants":2,"axios":14}],8:[function(require,module,exports){
+},{"../constants":2,"axios":15}],9:[function(require,module,exports){
 function allSnacksTemplate(snacks) {
   const snackDivContent = snacks.map(snack => `<div class='row allSnackRow'> <div class='row'>
         <div class='col-8'>
@@ -232,7 +278,7 @@ module.exports = {
   allSnacksTemplate,
 }
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 
 function loginFormTemplate() {
   return `
@@ -260,7 +306,7 @@ module.exports = {
   loginFormTemplate,
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 function navbarTemplate() {
   return `<div class='container-fluid navigation'>
   <div class='row'>
@@ -282,7 +328,7 @@ module.exports = {
   navbarTemplate,
 }
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
 function registerTemplate() {
   return `<div class='signupBox'>
@@ -315,7 +361,7 @@ module.exports = {
   registerTemplate,
 }
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 
 function viewOneSnackTemplate(snack) {
   return `<div class='infoBox title'>
@@ -359,7 +405,7 @@ module.exports = {
   viewOneSnackTemplate,
 }
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 const snackRequests = require('./requests/snacks')
 
 function getSnack(id) {
@@ -371,9 +417,9 @@ module.exports = {
   getSnack,
 }
 
-},{"./requests/snacks":6}],14:[function(require,module,exports){
+},{"./requests/snacks":7}],15:[function(require,module,exports){
 module.exports = require('./lib/axios');
-},{"./lib/axios":16}],15:[function(require,module,exports){
+},{"./lib/axios":17}],16:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -557,7 +603,7 @@ module.exports = function xhrAdapter(config) {
 };
 
 }).call(this,require('_process'))
-},{"../core/createError":22,"./../core/settle":25,"./../helpers/btoa":29,"./../helpers/buildURL":30,"./../helpers/cookies":32,"./../helpers/isURLSameOrigin":34,"./../helpers/parseHeaders":36,"./../utils":38,"_process":40}],16:[function(require,module,exports){
+},{"../core/createError":23,"./../core/settle":26,"./../helpers/btoa":30,"./../helpers/buildURL":31,"./../helpers/cookies":33,"./../helpers/isURLSameOrigin":35,"./../helpers/parseHeaders":37,"./../utils":39,"_process":41}],17:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -611,7 +657,7 @@ module.exports = axios;
 // Allow use of default import syntax in TypeScript
 module.exports.default = axios;
 
-},{"./cancel/Cancel":17,"./cancel/CancelToken":18,"./cancel/isCancel":19,"./core/Axios":20,"./defaults":27,"./helpers/bind":28,"./helpers/spread":37,"./utils":38}],17:[function(require,module,exports){
+},{"./cancel/Cancel":18,"./cancel/CancelToken":19,"./cancel/isCancel":20,"./core/Axios":21,"./defaults":28,"./helpers/bind":29,"./helpers/spread":38,"./utils":39}],18:[function(require,module,exports){
 'use strict';
 
 /**
@@ -632,7 +678,7 @@ Cancel.prototype.__CANCEL__ = true;
 
 module.exports = Cancel;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 var Cancel = require('./Cancel');
@@ -691,14 +737,14 @@ CancelToken.source = function source() {
 
 module.exports = CancelToken;
 
-},{"./Cancel":17}],19:[function(require,module,exports){
+},{"./Cancel":18}],20:[function(require,module,exports){
 'use strict';
 
 module.exports = function isCancel(value) {
   return !!(value && value.__CANCEL__);
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 var defaults = require('./../defaults');
@@ -779,7 +825,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = Axios;
 
-},{"./../defaults":27,"./../utils":38,"./InterceptorManager":21,"./dispatchRequest":23}],21:[function(require,module,exports){
+},{"./../defaults":28,"./../utils":39,"./InterceptorManager":22,"./dispatchRequest":24}],22:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -833,7 +879,7 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 module.exports = InterceptorManager;
 
-},{"./../utils":38}],22:[function(require,module,exports){
+},{"./../utils":39}],23:[function(require,module,exports){
 'use strict';
 
 var enhanceError = require('./enhanceError');
@@ -853,7 +899,7 @@ module.exports = function createError(message, config, code, request, response) 
   return enhanceError(error, config, code, request, response);
 };
 
-},{"./enhanceError":24}],23:[function(require,module,exports){
+},{"./enhanceError":25}],24:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -941,7 +987,7 @@ module.exports = function dispatchRequest(config) {
   });
 };
 
-},{"../cancel/isCancel":19,"../defaults":27,"./../helpers/combineURLs":31,"./../helpers/isAbsoluteURL":33,"./../utils":38,"./transformData":26}],24:[function(require,module,exports){
+},{"../cancel/isCancel":20,"../defaults":28,"./../helpers/combineURLs":32,"./../helpers/isAbsoluteURL":34,"./../utils":39,"./transformData":27}],25:[function(require,module,exports){
 'use strict';
 
 /**
@@ -964,7 +1010,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
   return error;
 };
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 var createError = require('./createError');
@@ -992,7 +1038,7 @@ module.exports = function settle(resolve, reject, response) {
   }
 };
 
-},{"./createError":22}],26:[function(require,module,exports){
+},{"./createError":23}],27:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1014,7 +1060,7 @@ module.exports = function transformData(data, headers, fns) {
   return data;
 };
 
-},{"./../utils":38}],27:[function(require,module,exports){
+},{"./../utils":39}],28:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -1110,7 +1156,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 }).call(this,require('_process'))
-},{"./adapters/http":15,"./adapters/xhr":15,"./helpers/normalizeHeaderName":35,"./utils":38,"_process":40}],28:[function(require,module,exports){
+},{"./adapters/http":16,"./adapters/xhr":16,"./helpers/normalizeHeaderName":36,"./utils":39,"_process":41}],29:[function(require,module,exports){
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -1123,7 +1169,7 @@ module.exports = function bind(fn, thisArg) {
   };
 };
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 // btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
@@ -1161,7 +1207,7 @@ function btoa(input) {
 
 module.exports = btoa;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1231,7 +1277,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
   return url;
 };
 
-},{"./../utils":38}],31:[function(require,module,exports){
+},{"./../utils":39}],32:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1247,7 +1293,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
     : baseURL;
 };
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1302,7 +1348,7 @@ module.exports = (
   })()
 );
 
-},{"./../utils":38}],33:[function(require,module,exports){
+},{"./../utils":39}],34:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1318,7 +1364,7 @@ module.exports = function isAbsoluteURL(url) {
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 };
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1388,7 +1434,7 @@ module.exports = (
   })()
 );
 
-},{"./../utils":38}],35:[function(require,module,exports){
+},{"./../utils":39}],36:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -1402,7 +1448,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
   });
 };
 
-},{"../utils":38}],36:[function(require,module,exports){
+},{"../utils":39}],37:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1457,7 +1503,7 @@ module.exports = function parseHeaders(headers) {
   return parsed;
 };
 
-},{"./../utils":38}],37:[function(require,module,exports){
+},{"./../utils":39}],38:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1486,7 +1532,7 @@ module.exports = function spread(callback) {
   };
 };
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 'use strict';
 
 var bind = require('./helpers/bind');
@@ -1791,7 +1837,7 @@ module.exports = {
   trim: trim
 };
 
-},{"./helpers/bind":28,"is-buffer":39}],39:[function(require,module,exports){
+},{"./helpers/bind":29,"is-buffer":40}],40:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -1814,7 +1860,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
