@@ -11,7 +11,7 @@ function processLoginForm(e) {
       if (rememberMe) {
         window.localStorage.setItem('token', result.data.token)
       }
-      window.location.href = '#/snacks'
+    //   window.location.href = '#/snacks'
     })
     .catch((err) => {
       console.error(err)
