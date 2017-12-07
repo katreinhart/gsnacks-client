@@ -18,6 +18,7 @@ function loginFormTemplate() {
         </div>
         <input type='submit' class='btn btn-info' value='Log in!'>
       </form>
+      <button href='#/register' class='btn btn-sm btn-warning'>Need to register? click here.</button>
     </div>`
 }
 

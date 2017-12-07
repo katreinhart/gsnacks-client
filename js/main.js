@@ -48,15 +48,11 @@ function setupHome() {
     })
   } else if (window.location.href.includes('#/logout')) {
     window.localStorage.removeItem('token')
-    window.location.href = '#'
-    mainContentDiv.innerHTML = registerTemplate()
-    setupRegisterForm()
+    window.location.href = '#/login'
+    
   } else {
-    // window.location.href = '/#/snacks'
-    // navContentDiv.innerHTML = navbarTemplate()
-    // setupSnacks().then((snacks) => {
-    //   mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-    // })
+    
+    console.log('somethin went wrong')
   }
 }
 

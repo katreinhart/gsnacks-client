@@ -100,15 +100,11 @@ function setupHome() {
     })
   } else if (window.location.href.includes('#/logout')) {
     window.localStorage.removeItem('token')
-    window.location.href = '#'
-    mainContentDiv.innerHTML = registerTemplate()
-    setupRegisterForm()
+    window.location.href = '#/login'
+    
   } else {
-    // window.location.href = '/#/snacks'
-    // navContentDiv.innerHTML = navbarTemplate()
-    // setupSnacks().then((snacks) => {
-    //   mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-    // })
+    
+    console.log('somethin went wrong')
   }
 }
 
@@ -246,6 +242,7 @@ function loginFormTemplate() {
         </div>
         <input type='submit' class='btn btn-info' value='Log in!'>
       </form>
+      <button href='#/register' class='btn btn-sm btn-warning'>Need to register? click here.</button>
     </div>`
 }
 
@@ -257,10 +254,8 @@ module.exports = {
 function navbarTemplate(loggedIn) {
     let logLink
     if(loggedIn) {
-        console.log('logged in')
         logLink = `<a class="nav-link loginLink" id="loginLink" href='#/logout'>Log Out</i></a>`
     } else {
-        console.log('logged out')
         logLink = `<a class='nav-link loginLink' id='loginLink' href='#/login'>Log In</i></a>`
     }
   return `
@@ -278,8 +273,8 @@ function navbarTemplate(loggedIn) {
                     <a class="nav-link" href="#/snacks">All Snacks <span class="sr-only">(current)</span></a>
                 </li>
                 ${loggedIn ? `<li class="nav-item">
-                <a class="nav-link" href="#/user/reviews">My Reviews</a>
-            </li>` : ``}
+                    <a class="nav-link" href="#/user/reviews">My Reviews</a>
+                </li>` : ``}
                 <!-- <li class="nav-item">
                     <a class="nav-link" href="#">Add Snack</a>
                 </li> -->
@@ -289,8 +284,8 @@ function navbarTemplate(loggedIn) {
                     ${logLink}
                 </li>
                 ${!loggedIn ? `<li class="nav-item">
-                <a class="nav-link" href="#/register">Register</a>
-            </li>` : ``}
+                    <a class="nav-link" href="#/register">Register</a>
+                </li>` : ``}
             </ul>
         </div>
     </nav>
