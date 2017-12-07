@@ -18,23 +18,30 @@ function setupHome() {
   const token = window.localStorage.getItem('token')
   if (!token) {
     if (window.location.href.includes('#/login')) {
-      console.log('time to log in')
+      navContentDiv.innerHTML = navbarTemplate(false)
       mainContentDiv.innerHTML = loginFormTemplate()
       setUpLoginForm()
-    } else {
+    } else if (window.location.href.includes('#/register')) {
+      navContentDiv.innerHTML = navbarTemplate(false)
       mainContentDiv.innerHTML = registerTemplate()
       setupRegisterForm()
+    } else {
+      navContentDiv.innerHTML = navbarTemplate(false)
+      window.location.href = '/#/snacks'
+      setupSnacks().then((snacks) => {
+        mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+      })
     }
   } else if (window.location.href.endsWith('/#/')) {
+    // default route is snacks
     window.location.href = '/#/snacks'
   } else if (window.location.href.endsWith('#/snacks')) {
-    navContentDiv.innerHTML = navbarTemplate()
+    navContentDiv.innerHTML = navbarTemplate(true)
     setupSnacks().then((snacks) => {
       mainContentDiv.innerHTML = allSnacksTemplate(snacks)
     })
   } else if (window.location.href.includes('#/snacks')) {
-    navContentDiv.innerHTML = navbarTemplate()
-
+    navContentDiv.innerHTML = navbarTemplate(true)
     const snackId = window.location.href.split('/')[5]
     getSnack(snackId).then((snack) => {
       mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
@@ -45,12 +52,11 @@ function setupHome() {
     mainContentDiv.innerHTML = registerTemplate()
     setupRegisterForm()
   } else {
-    window.location.href = '/#/snacks'
-    console.log('display snax')
-    navContentDiv.innerHTML = navbarTemplate()
-    setupSnacks().then((snacks) => {
-      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-    })
+    // window.location.href = '/#/snacks'
+    // navContentDiv.innerHTML = navbarTemplate()
+    // setupSnacks().then((snacks) => {
+    //   mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+    // })
   }
 }
 

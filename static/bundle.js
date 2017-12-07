@@ -70,23 +70,30 @@ function setupHome() {
   const token = window.localStorage.getItem('token')
   if (!token) {
     if (window.location.href.includes('#/login')) {
-      console.log('time to log in')
+      navContentDiv.innerHTML = navbarTemplate(false)
       mainContentDiv.innerHTML = loginFormTemplate()
       setUpLoginForm()
-    } else {
+    } else if (window.location.href.includes('#/register')) {
+      navContentDiv.innerHTML = navbarTemplate(false)
       mainContentDiv.innerHTML = registerTemplate()
       setupRegisterForm()
+    } else {
+      navContentDiv.innerHTML = navbarTemplate(false)
+      window.location.href = '/#/snacks'
+      setupSnacks().then((snacks) => {
+        mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+      })
     }
   } else if (window.location.href.endsWith('/#/')) {
+    // default route is snacks
     window.location.href = '/#/snacks'
   } else if (window.location.href.endsWith('#/snacks')) {
-    navContentDiv.innerHTML = navbarTemplate()
+    navContentDiv.innerHTML = navbarTemplate(true)
     setupSnacks().then((snacks) => {
       mainContentDiv.innerHTML = allSnacksTemplate(snacks)
     })
   } else if (window.location.href.includes('#/snacks')) {
-    navContentDiv.innerHTML = navbarTemplate()
-
+    navContentDiv.innerHTML = navbarTemplate(true)
     const snackId = window.location.href.split('/')[5]
     getSnack(snackId).then((snack) => {
       mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
@@ -97,12 +104,11 @@ function setupHome() {
     mainContentDiv.innerHTML = registerTemplate()
     setupRegisterForm()
   } else {
-    window.location.href = '/#/snacks'
-    console.log('display snax')
-    navContentDiv.innerHTML = navbarTemplate()
-    setupSnacks().then((snacks) => {
-      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-    })
+    // window.location.href = '/#/snacks'
+    // navContentDiv.innerHTML = navbarTemplate()
+    // setupSnacks().then((snacks) => {
+    //   mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+    // })
   }
 }
 
@@ -238,7 +244,7 @@ function loginFormTemplate() {
         <div class='inputLine'>
           <input id="checkBox" type="checkbox" checked><p class='rememberMe'>Remember me?</p>
         </div>
-        <input type='submit' value='Log in!'>
+        <input type='submit' class='btn btn-info' value='Log in!'>
       </form>
     </div>`
 }
@@ -248,7 +254,15 @@ module.exports = {
 }
 
 },{}],10:[function(require,module,exports){
-function navbarTemplate() {
+function navbarTemplate(loggedIn) {
+    let logLink
+    if(loggedIn) {
+        console.log('logged in')
+        logLink = `<a class="nav-link loginLink" id="loginLink" href='#/logout'>Log Out</i></a>`
+    } else {
+        console.log('logged out')
+        logLink = `<a class='nav-link loginLink' id='loginLink' href='#/login'>Log In</i></a>`
+    }
   return `
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-grey scrolling-navbar">
         <a class="navbar-brand" href="#"><strong>Galvanize Snacks</strong></a>
@@ -272,7 +286,7 @@ function navbarTemplate() {
             </ul>
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
-                    <a class="nav-link loginLink" id="loginLink" href='#/logout'>Log Out</i></a>
+                    ${logLink}
                 </li>
             </ul>
         </div>

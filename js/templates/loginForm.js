@@ -16,7 +16,7 @@ function loginFormTemplate() {
         <div class='inputLine'>
           <input id="checkBox" type="checkbox" checked><p class='rememberMe'>Remember me?</p>
         </div>
-        <input type='submit' value='Log in!'>
+        <input type='submit' class='btn btn-info' value='Log in!'>
       </form>
     </div>`
 }

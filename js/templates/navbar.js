@@ -1,4 +1,12 @@
-function navbarTemplate() {
+function navbarTemplate(loggedIn) {
+    let logLink
+    if(loggedIn) {
+        console.log('logged in')
+        logLink = `<a class="nav-link loginLink" id="loginLink" href='#/logout'>Log Out</i></a>`
+    } else {
+        console.log('logged out')
+        logLink = `<a class='nav-link loginLink' id='loginLink' href='#/login'>Log In</i></a>`
+    }
   return `
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-grey scrolling-navbar">
         <a class="navbar-brand" href="#"><strong>Galvanize Snacks</strong></a>
@@ -22,7 +30,7 @@ function navbarTemplate() {
             </ul>
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
-                    <a class="nav-link loginLink" id="loginLink" href='#/logout'>Log Out</i></a>
+                    ${logLink}
                 </li>
             </ul>
         </div>
