@@ -119,10 +119,10 @@ function processRegisterForm(e) {
 }
 
 function setupRegisterForm() {
-  const loginButton = document.getElementById('login')
-  loginButton.addEventListener('click', (e) => {
-    window.location.href = '#/login'
-  })
+  // const loginButton = document.getElementById('login')
+  // loginButton.addEventListener('click', (e) => {
+  //   window.location.href = '#/login'
+  // })
   const form = document.getElementById('signupForm')
   if (form.attachEvent) form.attachEvent('submit', processRegisterForm)
   else form.addEventListener('submit', processRegisterForm)
