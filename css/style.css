@@ -39,12 +39,16 @@ body, html {
     margin-bottom: 10px;
 }
 
+.userRow {
+    width: 100%;
+}
+
 .allSnackRow ul li {
     display: inline;
     margin: 0 20px;
 }
 
-.snackListImg {
+.snackListImg, .userListImg {
     max-width: 100%;
     max-height: 100%;
 }
