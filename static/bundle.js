@@ -277,9 +277,9 @@ function navbarTemplate(loggedIn) {
                 <li class="nav-item active">
                     <a class="nav-link" href="#/snacks">All Snacks <span class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#/user/reviews">My Reviews</a>
-                </li>
+                ${loggedIn ? `<li class="nav-item">
+                <a class="nav-link" href="#/user/reviews">My Reviews</a>
+            </li>` : ``}
                 <!-- <li class="nav-item">
                     <a class="nav-link" href="#">Add Snack</a>
                 </li> -->
@@ -288,6 +288,9 @@ function navbarTemplate(loggedIn) {
                 <li class="nav-item">
                     ${logLink}
                 </li>
+                ${!loggedIn ? `<li class="nav-item">
+                <a class="nav-link" href="#/register">Register</a>
+            </li>` : ``}
             </ul>
         </div>
     </nav>
