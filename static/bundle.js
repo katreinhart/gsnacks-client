@@ -261,7 +261,7 @@ function navbarTemplate() {
             </ul>
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
-                    <a class="nav-link loginLink">Log Out</i></a>
+                    <a class="nav-link loginLink" id="loginLink">Log Out</i></a>
                 </li>
             </ul>
         </div>
