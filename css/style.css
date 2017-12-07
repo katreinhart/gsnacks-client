@@ -20,9 +20,9 @@ body, html {
 
 .loginBox {
     position: fixed;
-    height: 400px;
+    height: 450px;
     width: 500px;
-    top: calc(50% - 150px);
+    top: calc(50% - 175px);
     left: calc(50% - 250px);
     background-color: #FFFFFF;
     padding: 30px;

@@ -49,9 +49,7 @@ function setupHome() {
   } else if (window.location.href.includes('#/logout')) {
     window.localStorage.removeItem('token')
     window.location.href = '#/login'
-    
   } else {
-    
     console.log('somethin went wrong')
   }
 }

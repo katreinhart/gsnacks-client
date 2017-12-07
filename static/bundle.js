@@ -101,9 +101,7 @@ function setupHome() {
   } else if (window.location.href.includes('#/logout')) {
     window.localStorage.removeItem('token')
     window.location.href = '#/login'
-    
   } else {
-    
     console.log('somethin went wrong')
   }
 }
@@ -242,7 +240,7 @@ function loginFormTemplate() {
         </div>
         <input type='submit' class='btn btn-info' value='Log in!'>
       </form>
-      <button href='#/register' class='btn btn-sm btn-warning'>Need to register? click here.</button>
+      <a href='#/register' class='btn btn-sm btn-warning'>Need to register? click here.</a>
     </div>`
 }
 
