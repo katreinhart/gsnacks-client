@@ -1,7 +1,7 @@
 
 function loginFormTemplate() {
   return `
-    <div class='loginBox animated fadeIn hidden'>
+    <div class='loginBox animated fadeIn'>
       <div class='inputLine'>
         <p>Log in for Snacks!</p>
         <hr>

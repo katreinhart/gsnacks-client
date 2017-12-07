@@ -69,14 +69,16 @@ const navContentDiv = document.getElementById('nav-content')
 function setupHome() {
   const token = window.localStorage.getItem('token')
   if (!token) {
-    mainContentDiv.innerHTML = registerTemplate()
-    setupRegisterForm()
-  }
-  if (window.location.href.endsWith('/#/')) {
+    if (window.location.href.includes('#/login')) {
+      console.log('time to log in')
+      mainContentDiv.innerHTML = loginFormTemplate()
+      setUpLoginForm()
+    } else {
+      mainContentDiv.innerHTML = registerTemplate()
+      setupRegisterForm()
+    }
+  } else if (window.location.href.endsWith('/#/')) {
     window.location.href = '/#/snacks'
-  } else if (window.location.href.includes('#/login')) {
-    mainContentDiv.innerHTML = loginFormTemplate()
-    setUpLoginForm()
   } else if (window.location.href.endsWith('#/snacks')) {
     navContentDiv.innerHTML = navbarTemplate()
     setupSnacks().then((snacks) => {
@@ -84,6 +86,7 @@ function setupHome() {
     })
   } else if (window.location.href.includes('#/snacks')) {
     navContentDiv.innerHTML = navbarTemplate()
+
     const snackId = window.location.href.split('/')[5]
     getSnack(snackId).then((snack) => {
       mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
@@ -93,6 +96,13 @@ function setupHome() {
     window.location.href = '#'
     mainContentDiv.innerHTML = registerTemplate()
     setupRegisterForm()
+  } else {
+    window.location.href = '/#/snacks'
+    console.log('display snax')
+    navContentDiv.innerHTML = navbarTemplate()
+    setupSnacks().then((snacks) => {
+      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+    })
   }
 }
 
@@ -111,7 +121,8 @@ function processRegisterForm(e) {
 
   userRequests.register({ first_name: fname, last_name: lname, email, password })
     .then((result) => {
-      window.location.href = '#/login'
+      window.location.href = '#/snacks'
+      window.localStorage.setItem('token', result.token)
     })
     .catch((err) => {
       console.error(err)
@@ -119,10 +130,10 @@ function processRegisterForm(e) {
 }
 
 function setupRegisterForm() {
-  // const loginButton = document.getElementById('login')
-  // loginButton.addEventListener('click', (e) => {
-  //   window.location.href = '#/login'
-  // })
+  const loginButton = document.getElementById('login')
+  loginButton.addEventListener('click', (e) => {
+    window.location.href = '#/login'
+  })
   const form = document.getElementById('signupForm')
   if (form.attachEvent) form.attachEvent('submit', processRegisterForm)
   else form.addEventListener('submit', processRegisterForm)
@@ -212,7 +223,7 @@ module.exports = {
 
 function loginFormTemplate() {
   return `
-    <div class='loginBox animated fadeIn hidden'>
+    <div class='loginBox animated fadeIn'>
       <div class='inputLine'>
         <p>Log in for Snacks!</p>
         <hr>
@@ -250,10 +261,10 @@ function navbarTemplate() {
                     <a class="nav-link" href="#">Home</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">All Snacks <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="#/snacks">All Snacks <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">My Reviews</a>
+                    <a class="nav-link" href="#/user/reviews">My Reviews</a>
                 </li>
                 <!-- <li class="nav-item">
                     <a class="nav-link" href="#">Add Snack</a>
@@ -261,7 +272,7 @@ function navbarTemplate() {
             </ul>
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
-                    <a class="nav-link loginLink" id="loginLink">Log Out</i></a>
+                    <a class="nav-link loginLink" id="loginLink" href='#/logout'>Log Out</i></a>
                 </li>
             </ul>
         </div>
@@ -277,23 +288,27 @@ module.exports = {
 
 function registerTemplate() {
   return `
-    <div class='signupBox animated fadeIn hidden'>
+    <div class='signupBox animated fadeIn'>
       <div class='inputLine'>
         <p>Sign up for Snacks!</p>
         <hr>
       </div>
       <form id='signupForm'>
         <div class='inputLine'>
-          <p>Name: </p><input class='formInput' type='text' placeholder='Name' value='Kat Cool'>
+          <p>First Name: </p><input class='formInput' type='text' placeholder='First Name' value='Kat'>
         </div>
+        <div class='inputLine'>
+        <p>Last Name: </p><input class='formInput' type='text' placeholder='Last Name' value='Example'>
+      </div>
         <div class='inputLine'>
           <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='kat@example.com'>
         </div>
         <div class='inputLine'>
           <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf1234'>
         </div>
-        <input type='submit' value='Sign up!'>
+        <input type='submit' value='Sign up!' class='btn btn-info'>
       </form>
+      <button class='btn btn-warning btn-sm' id='login' href='#/login'>Already registered? Login here!</button>
     </div>`
 }
 

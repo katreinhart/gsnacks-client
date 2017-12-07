@@ -17,14 +17,16 @@ const navContentDiv = document.getElementById('nav-content')
 function setupHome() {
   const token = window.localStorage.getItem('token')
   if (!token) {
-    mainContentDiv.innerHTML = registerTemplate()
-    setupRegisterForm()
-  }
-  if (window.location.href.endsWith('/#/')) {
+    if (window.location.href.includes('#/login')) {
+      console.log('time to log in')
+      mainContentDiv.innerHTML = loginFormTemplate()
+      setUpLoginForm()
+    } else {
+      mainContentDiv.innerHTML = registerTemplate()
+      setupRegisterForm()
+    }
+  } else if (window.location.href.endsWith('/#/')) {
     window.location.href = '/#/snacks'
-  } else if (window.location.href.includes('#/login')) {
-    mainContentDiv.innerHTML = loginFormTemplate()
-    setUpLoginForm()
   } else if (window.location.href.endsWith('#/snacks')) {
     navContentDiv.innerHTML = navbarTemplate()
     setupSnacks().then((snacks) => {
@@ -32,6 +34,7 @@ function setupHome() {
     })
   } else if (window.location.href.includes('#/snacks')) {
     navContentDiv.innerHTML = navbarTemplate()
+
     const snackId = window.location.href.split('/')[5]
     getSnack(snackId).then((snack) => {
       mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
@@ -41,6 +44,13 @@ function setupHome() {
     window.location.href = '#'
     mainContentDiv.innerHTML = registerTemplate()
     setupRegisterForm()
+  } else {
+    window.location.href = '/#/snacks'
+    console.log('display snax')
+    navContentDiv.innerHTML = navbarTemplate()
+    setupSnacks().then((snacks) => {
+      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+    })
   }
 }
 

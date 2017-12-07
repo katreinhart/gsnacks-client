@@ -9,7 +9,8 @@ function processRegisterForm(e) {
 
   userRequests.register({ first_name: fname, last_name: lname, email, password })
     .then((result) => {
-      window.location.href = '#/login'
+      window.location.href = '#/snacks'
+      window.localStorage.setItem('token', result.token)
     })
     .catch((err) => {
       console.error(err)
@@ -17,10 +18,10 @@ function processRegisterForm(e) {
 }
 
 function setupRegisterForm() {
-  // const loginButton = document.getElementById('login')
-  // loginButton.addEventListener('click', (e) => {
-  //   window.location.href = '#/login'
-  // })
+  const loginButton = document.getElementById('login')
+  loginButton.addEventListener('click', (e) => {
+    window.location.href = '#/login'
+  })
   const form = document.getElementById('signupForm')
   if (form.attachEvent) form.attachEvent('submit', processRegisterForm)
   else form.addEventListener('submit', processRegisterForm)

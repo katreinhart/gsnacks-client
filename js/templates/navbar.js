@@ -11,10 +11,10 @@ function navbarTemplate() {
                     <a class="nav-link" href="#">Home</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">All Snacks <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="#/snacks">All Snacks <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">My Reviews</a>
+                    <a class="nav-link" href="#/user/reviews">My Reviews</a>
                 </li>
                 <!-- <li class="nav-item">
                     <a class="nav-link" href="#">Add Snack</a>
@@ -22,7 +22,7 @@ function navbarTemplate() {
             </ul>
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
-                    <a class="nav-link loginLink" id="loginLink">Log Out</i></a>
+                    <a class="nav-link loginLink" id="loginLink" href='#/logout'>Log Out</i></a>
                 </li>
             </ul>
         </div>
