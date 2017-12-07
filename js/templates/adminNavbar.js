@@ -34,5 +34,5 @@ function adminNavbarTemplate() {
 }
 
 module.exports = {
-  navbarTemplate,
+  adminNavbarTemplate,
 }
