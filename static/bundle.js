@@ -212,24 +212,24 @@ module.exports = {
 
 function loginFormTemplate() {
   return `
-  <div class='signupBox'>
-    <div class='inputLine'>
-      <p>Log in for Snacks!</p>
-      <hr>
-    </div>
-    <form id='loginForm'>
+    <div class='loginBox animated fadeIn hidden'>
       <div class='inputLine'>
-        <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='kat@example.com'>
+        <p>Log in for Snacks!</p>
+        <hr>
       </div>
-      <div class='inputLine'>
-        <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf1234'>
-      </div>
-      <div class='inputLine'>
-        <input id="checkBox" type="checkbox" checked><p class='rememberMe'>Remember me?</p>
-      </div>
-      <input type='submit' value='Log in!'>
-    </form>
-  </div>`
+      <form id='loginForm'>
+        <div class='inputLine'>
+          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='kat@example.com'>
+        </div>
+        <div class='inputLine'>
+          <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf1234'>
+        </div>
+        <div class='inputLine'>
+          <input id="checkBox" type="checkbox" checked><p class='rememberMe'>Remember me?</p>
+        </div>
+        <input type='submit' value='Log in!'>
+      </form>
+    </div>`
 }
 
 module.exports = {
@@ -238,20 +238,35 @@ module.exports = {
 
 },{}],10:[function(require,module,exports){
 function navbarTemplate() {
-  return `<div class='container-fluid navigation'>
-  <div class='row'>
-    <div class='col-10'>
-      <ul>
-        <a href='/#/'><li>Home</li></a>
-        <a href='/#/index'><li>View All</li></a>
-        <a href='/#/edit'><li>Add/Edit</li></a>
-      </ul>
-    </div>
-    <div class='col-2'>
-      <a href='#/logout'>Log Out</a>
-    </div>
-  </div>
-</div>`
+  return `
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-grey scrolling-navbar">
+        <a class="navbar-brand" href="#"><strong>Galvanize Snacks</strong></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">All Snacks <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">My Reviews</a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="#">Add Snack</a>
+                </li> -->
+            </ul>
+            <ul class="navbar-nav nav-flex-icons">
+                <li class="nav-item">
+                    <a class="nav-link loginLink">Log Out</i></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    `
 }
 
 module.exports = {
@@ -261,29 +276,24 @@ module.exports = {
 },{}],11:[function(require,module,exports){
 
 function registerTemplate() {
-  return `<div class='signupBox'>
+  return `
+    <div class='signupBox animated fadeIn hidden'>
       <div class='inputLine'>
         <p>Sign up for Snacks!</p>
         <hr>
       </div>
       <form id='signupForm'>
         <div class='inputLine'>
-          <p>First Name: </p>
-          <input class='formInput' type='text' placeholder='First Name' >
+          <p>Name: </p><input class='formInput' type='text' placeholder='Name' value='Kat Cool'>
         </div>
         <div class='inputLine'>
-          <p>Last Name: </p>
-          <input class='formInput' type='text' placeholder='Last Name' >
+          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='kat@example.com'>
         </div>
         <div class='inputLine'>
-          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' >
+          <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf1234'>
         </div>
-        <div class='inputLine'>
-          <p>Password: </p><input class='formInput' type='password' placeholder='Password' >
-        </div>
-        <input type='submit' class="btn btn-success" value='Sign up!'>
+        <input type='submit' value='Sign up!'>
       </form>
-      <button class="btn btn-info btn-sm" id="login">Already signed up? Login here.</button>
     </div>`
 }
 
@@ -339,7 +349,7 @@ module.exports = {
 const snackRequests = require('./requests/snacks')
 
 function getSnack(id) {
-  return snackRequests.getSnack(id)
+  return snackRequests.find(id)
     .then(result => result.data.snacks)
 }
 
