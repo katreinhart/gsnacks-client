@@ -34,7 +34,7 @@ function setupHome() {
     }
   } else if (window.location.href.endsWith('/#/')) {
     // default route is snacks
-    window.location.href = '/#/snacks'
+    // window.location.href = '/#/snacks'
   } else if (window.location.href.endsWith('#/snacks')) {
     navContentDiv.innerHTML = navbarTemplate(true)
     setupSnacks().then((snacks) => {
@@ -42,6 +42,7 @@ function setupHome() {
     })
   } else if (window.location.href.includes('#/snacks')) {
     navContentDiv.innerHTML = navbarTemplate(true)
+    console.log('display one snack')
     const snackId = window.location.href.split('/')[5]
     getSnack(snackId).then((snack) => {
       mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
