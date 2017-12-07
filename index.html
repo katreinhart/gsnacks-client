@@ -7,81 +7,17 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/mdb.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>Galvanize Snacks!</title>
   </head>
-
-  <header>
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-grey scrolling-navbar">
-        <a class="navbar-brand" href="#"><strong>Galvanize Snacks</strong></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-            </ul>
-            <ul class="navbar-nav nav-flex-icons">
-                <li class="nav-item">
-                    <a class="nav-link signupLink">Sign Up</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link loginLink">Log In</i></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-  </header>
   <body>
-
-    <div class='signupBox animated fadeIn hidden'>
-      <div class='inputLine'>
-        <p>Sign up for Snacks!</p>
-        <hr>
-      </div>
-      <form id='signupForm'>
-        <div class='inputLine'>
-          <p>Name: </p><input class='formInput' type='text' placeholder='Name' value='Kat Cool'>
-        </div>
-        <div class='inputLine'>
-          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='kat@example.com'>
-        </div>
-        <div class='inputLine'>
-          <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf1234'>
-        </div>
-        <input type='submit' value='Sign up!'>
-      </form>
-    </div>
-
-    <div class='loginBox animated fadeIn hidden'>
-      <div class='inputLine'>
-        <p>Log in for Snacks!</p>
-        <hr>
-      </div>
-      <form id='loginForm'>
-        <div class='inputLine'>
-          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='kat@example.com'>
-        </div>
-        <div class='inputLine'>
-          <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf1234'>
-        </div>
-        <div class='inputLine'>
-          <input id="checkBox" type="checkbox" checked><p class='rememberMe'>Remember me?</p>
-        </div>
-        <input type='submit' value='Log in!'>
-      </form>
-    </div>
-
-    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="js/popper.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/mdb.min.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <div id='nav-content'></div>
+    <div id='main-content'></div>
+    <div class='bg'></div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="js/index.js"></script>
+    
+    <script type="text/javascript" src="static/bundle.js"></script>
   </body>
 </html>

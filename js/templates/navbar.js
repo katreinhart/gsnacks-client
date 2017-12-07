@@ -1,18 +1,33 @@
 function navbarTemplate() {
-  return `<div class='container-fluid navigation'>
-  <div class='row'>
-    <div class='col-10'>
-      <ul>
-        <a href='/#/'><li>Home</li></a>
-        <a href='/#/index'><li>View All</li></a>
-        <a href='/#/edit'><li>Add/Edit</li></a>
-      </ul>
-    </div>
-    <div class='col-2'>
-      <a href='#/logout'>Log Out</a>
-    </div>
-  </div>
-</div>`
+  return `
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-grey scrolling-navbar">
+        <a class="navbar-brand" href="#"><strong>Galvanize Snacks</strong></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">All Snacks <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">My Reviews</a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="#">Add Snack</a>
+                </li> -->
+            </ul>
+            <ul class="navbar-nav nav-flex-icons">
+                <li class="nav-item">
+                    <a class="nav-link loginLink">Log Out</i></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    `
 }
 
 module.exports = {

@@ -7,42 +7,17 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/mdb.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>Galvanize Snacks!</title>
   </head>
-
-  <header>
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-grey scrolling-navbar">
-        <a class="navbar-brand" href="#"><strong>Galvanize Snacks</strong></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Home</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">All Snacks <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">My Reviews</a>
-                </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link" href="#">Add Snack</a>
-                </li> -->
-            </ul>
-            <ul class="navbar-nav nav-flex-icons">
-                <li class="nav-item">
-                    <a class="nav-link loginLink">Log Out</i></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-  </header>
   <body>
-    <div class='topSpacer'></div>
-    <div class='container-fluid'>
+    <div id='nav-content'></div>
+    <div class='container-fluid mainBody'>
+      <div class='row allSnackRow'>
+        <div class='col-12'>
+          <h1>All Snacks!</h1>
+        </div>
+      </div>
 
       <div class='row allSnackRow'>
         <div class='row'>
@@ -56,12 +31,11 @@
             <img src='images/snack1.jpg' alt='picture of snack' class='snackListImg'>
           </div>
         </div>
-        <div class='row miniMenu'>
+        <div class='row'>
           <div class='col-7'>
             <ul>
               <a href=''><li>View</li></a>
-              <!-- <a href=''><li>Edit</li></a>
-              <a href=''><li>Delete</li></a> -->
+              <a href=''><li>Review</li></a>
             </ul>
           </div>
           <div class='col-5'>
@@ -81,12 +55,11 @@
             <img src='images/snack1.jpg' alt='picture of snack' class='snackListImg'>
           </div>
         </div>
-        <div class='row miniMenu'>
+        <div class='row'>
           <div class='col-7'>
             <ul>
               <a href=''><li>View</li></a>
-              <!-- <a href=''><li>Edit</li></a>
-              <a href=''><li>Delete</li></a> -->
+              <a href=''><li>Review</li></a>
             </ul>
           </div>
           <div class='col-5'>
@@ -106,12 +79,11 @@
             <img src='images/snack1.jpg' alt='picture of snack' class='snackListImg'>
           </div>
         </div>
-        <div class='row miniMenu'>
+        <div class='row'>
           <div class='col-7'>
             <ul>
               <a href=''><li>View</li></a>
-              <!-- <a href=''><li>Edit</li></a>
-              <a href=''><li>Delete</li></a> -->
+              <a href=''><li>Review</li></a>
             </ul>
           </div>
           <div class='col-5'>
@@ -120,11 +92,7 @@
       </div>
 
     </div>
-
-    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="js/popper.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/mdb.min.js"></script>
+    <div class='bg'></div>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>

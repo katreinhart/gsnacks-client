@@ -1,8 +1,7 @@
-const { baseURL } = require('./constants')
-const axios = require('axios')
+const snackRequests = require('./requests/snacks')
 
 function getSnack(id) {
-  return axios.get(`${baseURL}/api/snacks/${id}`)
+  return snackRequests.getSnack(id)
     .then(result => result.data.snacks)
 }
 

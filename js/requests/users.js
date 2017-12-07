@@ -1,21 +1,24 @@
-window.Users = {
+const baseURL = require('../constants')
+const axios = require('axios')
+
+module.exports = {
     getAll(){
         return axios.get(`${baseURL}/api/users`)
     },
     find(id){
-        return axios.get(`${baseURL}/api/users/:id`)
+        return axios.get(`${baseURL}/api/users/${id}`)
     },
-    edit(body){
-        return axios.patch(`${baseURL}/api/users/:id`, body)
+    edit(id, body){
+        return axios.patch(`${baseURL}/api/users/${id}`, body)
     },
     delete(id){
-        return axios.delete(`${baseURL}/api/users/:id`)
+        return axios.delete(`${baseURL}/api/users/${id}`)
     },
-    register(){
-        return axios.post(`${baseURL}/auth/register`)
+    register(body){
+        return axios.post(`${baseURL}/auth/register`, body)
     },
-    login(){
-        return axios.post(`${baseURL}/auth/login`)
+    login(body){
+        return axios.post(`${baseURL}/auth/login`, body)
     }
     
 }
