@@ -84,9 +84,6 @@ function setupHome() {
         mainContentDiv.innerHTML = allSnacksTemplate(snacks)
       })
     }
-  } else if (window.location.href.endsWith('/#/')) {
-    // default route is snacks
-    // window.location.href = '/#/snacks'
   } else if (window.location.href.endsWith('#/snacks')) {
     navContentDiv.innerHTML = navbarTemplate(true)
     setupSnacks().then((snacks) => {
@@ -103,7 +100,10 @@ function setupHome() {
     window.localStorage.removeItem('token')
     window.location.href = '#/login'
   } else {
-    console.log('somethin went wrong')
+    navContentDiv.innerHTML = navbarTemplate(true)
+    setupSnacks().then((snacks) => {
+      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+    })
   }
 }
 
