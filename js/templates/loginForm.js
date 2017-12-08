@@ -16,9 +16,12 @@ function loginFormTemplate() {
         <div class='inputLine'>
           <input id="checkBox" type="checkbox" checked><p class='rememberMe'>Remember me?</p>
         </div>
+        <blockquote id='login-error' class="blockquote bq-danger hidden">
+            <small class='danger'>Please check your email and password and try again.</small>
+        </blockquote>
         <input type='submit' class='btn btn-info' value='Log in!'>
+        <a href='#/register' class='btn btn-warning'>Need to register? click here.</a>
       </form>
-      <a href='#/register' class='btn btn-sm btn-warning'>Need to register? click here.</a>
     </div>`
 }
 

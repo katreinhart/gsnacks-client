@@ -15,8 +15,8 @@ function processLoginForm(e) {
     })
     .catch((err) => {
       console.error(err)
+      document.getElementById('login-error').classList.remove('hidden')
     })
-  
 }
 
 function setUpLoginForm() {

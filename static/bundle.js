@@ -68,8 +68,8 @@ function processLoginForm(e) {
     })
     .catch((err) => {
       console.error(err)
+      document.getElementById('login-error').classList.remove('hidden')
     })
-  
 }
 
 function setUpLoginForm() {
@@ -226,11 +226,13 @@ function processRegisterForm(e) {
 
   userRequests.register({ first_name: fname, last_name: lname, email, password })
     .then((result) => {
+      window.localStorage.setItem('token', result.data.token)
+      window.isLoggedIn = true
       window.location.href = '#/snacks'
-      window.localStorage.setItem('token', result.token)
     })
     .catch((err) => {
       console.error(err)
+      document.getElementById('used-email-error').classList.remove('hidden')
     })
 }
 
@@ -420,9 +422,12 @@ function loginFormTemplate() {
         <div class='inputLine'>
           <input id="checkBox" type="checkbox" checked><p class='rememberMe'>Remember me?</p>
         </div>
+        <blockquote id='login-error' class="blockquote bq-danger hidden">
+            <small class='danger'>Please check your email and password and try again.</small>
+        </blockquote>
         <input type='submit' class='btn btn-info' value='Log in!'>
+        <a href='#/register' class='btn btn-warning'>Need to register? click here.</a>
       </form>
-      <a href='#/register' class='btn btn-sm btn-warning'>Need to register? click here.</a>
     </div>`
 }
 
@@ -492,12 +497,17 @@ function registerTemplate() {
         <div class='inputLine'>
           <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='kat@example.com'>
         </div>
+        <blockquote id='used-email-error' class="blockquote bq-danger hidden">
+            <small class='danger'>That email is already taken.</small>
+        </blockquote>
         <div class='inputLine'>
           <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf1234'>
         </div>
+        
         <input type='submit' value='Sign up!' class='btn btn-info'>
+        <button class='btn btn-warning' id='login' href='#/login'>Already registered? Login here!</button>  
       </form>
-      <button class='btn btn-warning btn-sm' id='login' href='#/login'>Already registered? Login here!</button>
+      
     </div>`
 }
 
