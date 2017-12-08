@@ -7,12 +7,19 @@ function processRegisterForm(e) {
   const email = e.srcElement[2].value
   const password = e.srcElement[3].value
 
-  userRequests.register({ first_name: fname, last_name: lname, email, password })
+  userRequests.register({
+    first_name: fname,
+    last_name: lname,
+    email,
+    password,
+  })
     .then((result) => {
-      window.location.href = '#/login'
+      window.localStorage.setItem('token', result.data.token)
+      window.isLoggedIn = true
+      window.location.href = '#/snacks'
     })
     .catch((err) => {
-      console.error(err)
+      document.getElementById('used-email-error').classList.remove('hidden')
     })
 }
 

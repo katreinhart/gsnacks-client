@@ -4,18 +4,22 @@ function processLoginForm(e) {
   if (e.preventDefault) e.preventDefault()
   const email = e.srcElement[0].value
   const password = e.srcElement[1].value
-  const rememberMe = e.srcElement[2].checked
-  userRequests.login({ email, password })
+  return userRequests.login({ email, password })
     .then((result) => {
-      if (rememberMe) {
-        window.localStorage.setItem('token', result.data.token)
-      }
-      window.location.href = '#/snacks'
+      window.localStorage.setItem('token', result.data.token)
+      window.isLoggedIn = true
+      userRequests.getUser(result.data.token).then((user) => {
+        if (user.data.admin) {
+          window.location.href = '#/admin'
+        } else {
+          window.location.href = '#/snacks'
+        }
+      })
     })
     .catch((err) => {
       console.error(err)
+      document.getElementById('login-error').classList.remove('hidden')
     })
-  return false
 }
 
 function setUpLoginForm() {

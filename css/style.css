@@ -9,9 +9,9 @@ body, html {
 
 .signupBox {
     position: fixed;
-    height: 400px;
+    height: 500px;
     width: 500px;
-    top: calc(50% - 150px);
+    top: calc(50% - 200px);
     left: calc(50% - 250px);
     background-color: #FFFFFF;
     padding: 30px;

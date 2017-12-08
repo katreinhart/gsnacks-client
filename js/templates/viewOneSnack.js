@@ -1,28 +1,34 @@
 function viewOneSnackTemplate(snack) {
+  const adminButtons = window.isAdmin ? `
+    <button class='btn btn-sm btn-warning' id='edit-${snack.id}'>Edit Snack</button>
+    <button class='btn btn-sm btn-danger' id='delete-${snack.id}'>Delete Snack</button>
+  ` : ``
   return `<div class='container-fluid infoBox'>
       <div class='title'>
-        <p class='strongP'>Snack Title</p>
+        <h3 class='strongP pt-2'>${snack.name}</h3>
       </div>
       <div class='snackImg'>
-        <p>Replace with img of snack</p>
+        <img src='${snack.img}' width=300 alt='a picture of ${snack.name}'>
       </div>
       <div>
         <div class='inputLine'>
-          <p class='strongP'>ID Number: </p><span>5</span>
+          <p>ID Number: <span class='strongP'>${snack.id}</span></p>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Name: </p><span>Name</span>
+          <p>Name: <span class='strongP'>${snack.name}</span></p>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Average Rating: </p><span>5</span>
+          <p>Average Rating: <span class='strongP'>${snack.averageRating}</span></p>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Price: </p><span>Price</span>
+          <p>Price: <span class='strongP'>${snack.price}</span></p>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Description: </p><span>Gingerbread cake jelly pudding jelly beans. Fruitcake gingerbread wafer wafer gingerbread apple pie marshmallow. Biscuit jelly cookie dragée brownie dessert carrot cake macaroon bonbon. Unerdwear.com liquorice marshmallow fruitcake caramels dessert gingerbread.</span>
+          <p>Description: <span class='strongP'>${snack.description}</span></p>
         </div>
+        
       </div>
+      <button class='btn btn-info btn-sm' id='review-${snack.id}'>Review ${snack.name}</button> ${adminButtons}
     </div>`
 }
 
