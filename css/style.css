@@ -61,6 +61,16 @@ body, html {
     width: 100%;
 }
 
+.infoBox {
+    background-color: #999999;
+    width: 600px;
+    margin-top: 150px;
+}
+
+.strongP {
+    font-weight: 800;
+}
+
 .hidden {
     display:none;
 }
