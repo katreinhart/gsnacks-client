@@ -11,5 +11,6 @@ To do:
 1. Improve visual/UX design 
 
 Browserify:
-1. Run npm install 
-1. npm run watchify gsnacks-client/js/main.js -o gsnacks-client/static/bundle.js (from base folder)
+1. yarn 
+1. yarn run watchify js/main.js -o static/bundle.js
+1. live-server

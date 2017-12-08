@@ -22,9 +22,6 @@ function navbarTemplate(loggedIn) {
                 ${loggedIn ? `<li class="nav-item">
                     <a class="nav-link" href="#/user/reviews">My Reviews</a>
                 </li>` : ``}
-                <!-- <li class="nav-item">
-                    <a class="nav-link" href="#">Add Snack</a>
-                </li> -->
             </ul>
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">

@@ -23,54 +23,84 @@ const { setupAdminUsers } = require('./admin')
 const mainContentDiv = document.getElementById('main-content')
 const navContentDiv = document.getElementById('nav-content')
 
-function setupHome() {
+let isAdmin = false, isLoggedIn = false
+
+function redirectTo(str) {
+  if (str.includes('#')) window.location.hash = str
+  window.location.reload()
+  loadHome()
+}
+
+function setupAdmin() {
   const token = window.localStorage.getItem('token')
-  getMyInfo(token).then(console.log)
-  if (!token) {
-    if (window.location.href.includes('#/login')) {
-      navContentDiv.innerHTML = navbarTemplate(false)
-      mainContentDiv.innerHTML = loginFormTemplate()
-      setUpLoginForm()
-    } else if (window.location.href.includes('#/register')) {
-      navContentDiv.innerHTML = navbarTemplate(false)
-      mainContentDiv.innerHTML = registerTemplate()
-      setupRegisterForm()
-    } else {
-      navContentDiv.innerHTML = navbarTemplate(false)
-      window.location.href = '/#/snacks'
-      setupSnacks().then((snacks) => {
-        mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-      })
-    }
-  } else if (window.location.href.endsWith('#/snacks')) {
-    navContentDiv.innerHTML = navbarTemplate(true)
-    setupSnacks().then((snacks) => {
-      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-    })
-  } else if (window.location.href.includes('#/snacks')) {
-    navContentDiv.innerHTML = navbarTemplate(true)
-    const snackId = window.location.href.split('/')[5]
-    getSnack(snackId).then((snack) => {
-      mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
-    })
-  } else if (window.location.href.includes('#/logout')) {
-    window.localStorage.removeItem('token')
-    window.location.href = '#/login'
-  } else if (window.location.href.includes('#/admin')) {
-    // verify actual admin status
-    navContentDiv.innerHTML = adminNavbarTemplate()
-    getUsers(token).then((result) => {
-      const { users } = result.data
-      mainContentDiv.innerHTML = allUsersTemplate(users)
-      setupAdminUsers()
-    })
+  navContentDiv.innerHTML = adminNavbarTemplate()
+  getUsers(token).then((result) => {
+    const { users } = result.data
+    mainContentDiv.innerHTML = allUsersTemplate(users)
+    setupAdminUsers()
+  })
+}
+
+function setupLoggedOutView() {
+  if (window.location.href.includes('#/login')) {
+    navContentDiv.innerHTML = navbarTemplate(isLoggedIn)
+    mainContentDiv.innerHTML = loginFormTemplate()
+    setUpLoginForm()
+  } else if (window.location.href.includes('#/register')) {
+    navContentDiv.innerHTML = navbarTemplate(isLoggedIn)
+    mainContentDiv.innerHTML = registerTemplate()
+    setupRegisterForm()
   } else {
-    navContentDiv.innerHTML = navbarTemplate(true)
+    navContentDiv.innerHTML = navbarTemplate(isLoggedIn)
+    window.location.href = '/#/snacks'
     setupSnacks().then((snacks) => {
       mainContentDiv.innerHTML = allSnacksTemplate(snacks)
     })
   }
 }
 
+function loadHome() {
+  if (window.location.href.endsWith('#/snacks')) {
+    navContentDiv.innerHTML = isAdmin? adminNavbarTemplate() : navbarTemplate(true)
+    setupSnacks().then((snacks) => {
+      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+    })
+  } else if (window.location.href.includes('#/snacks')) {
+    navContentDiv.innerHTML = isAdmin? adminNavbarTemplate() : navbarTemplate(true)
+    const snackId = window.location.href.split('/')[5]
+    getSnack(snackId).then((snack) => {
+      mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+    })
+  } else if (window.location.href.includes('#/logout')) {
+    window.localStorage.removeItem('token')
+    redirectTo('#/login')
+  } else { // fallback route
+    navContentDiv.innerHTML = isAdmin? adminNavbarTemplate() : navbarTemplate(true)
+    setupSnacks().then((snacks) => {
+      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+    })
+  }
+}
+
+function setupHome() {
+  const token = window.localStorage.getItem('token')
+  if(token) {
+    getMyInfo(token).then(result => {
+      const user = result.data
+      isLoggedIn = true
+      isAdmin = user.admin
+      if(isAdmin) {
+        setupAdmin()
+      } else {
+        loadHome()
+      }
+    }).catch(console.error)
+  }
+
+  else {
+    setupLoggedOutView()
+  } 
+}
+
 setupHome()
-window.addEventListener('hashchange', setupHome, false)
+window.addEventListener('hashchange', loadHome, false)

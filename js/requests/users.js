@@ -22,6 +22,5 @@ module.exports = {
     },
     login(body) {
         return axios.post(`${baseURL}/auth/login`, body)
-    }
-    
+    }  
 }

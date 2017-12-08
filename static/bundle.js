@@ -108,57 +108,87 @@ const { setupAdminUsers } = require('./admin')
 const mainContentDiv = document.getElementById('main-content')
 const navContentDiv = document.getElementById('nav-content')
 
-function setupHome() {
+let isAdmin = false, isLoggedIn = false
+
+function redirectTo(str) {
+  if (str.includes('#')) window.location.hash = str
+  window.location.reload()
+  loadHome()
+}
+
+function setupAdmin() {
   const token = window.localStorage.getItem('token')
-  getMyInfo(token).then(console.log)
-  if (!token) {
-    if (window.location.href.includes('#/login')) {
-      navContentDiv.innerHTML = navbarTemplate(false)
-      mainContentDiv.innerHTML = loginFormTemplate()
-      setUpLoginForm()
-    } else if (window.location.href.includes('#/register')) {
-      navContentDiv.innerHTML = navbarTemplate(false)
-      mainContentDiv.innerHTML = registerTemplate()
-      setupRegisterForm()
-    } else {
-      navContentDiv.innerHTML = navbarTemplate(false)
-      window.location.href = '/#/snacks'
-      setupSnacks().then((snacks) => {
-        mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-      })
-    }
-  } else if (window.location.href.endsWith('#/snacks')) {
-    navContentDiv.innerHTML = navbarTemplate(true)
-    setupSnacks().then((snacks) => {
-      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-    })
-  } else if (window.location.href.includes('#/snacks')) {
-    navContentDiv.innerHTML = navbarTemplate(true)
-    const snackId = window.location.href.split('/')[5]
-    getSnack(snackId).then((snack) => {
-      mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
-    })
-  } else if (window.location.href.includes('#/logout')) {
-    window.localStorage.removeItem('token')
-    window.location.href = '#/login'
-  } else if (window.location.href.includes('#/admin')) {
-    // verify actual admin status
-    navContentDiv.innerHTML = adminNavbarTemplate()
-    getUsers(token).then((result) => {
-      const { users } = result.data
-      mainContentDiv.innerHTML = allUsersTemplate(users)
-      setupAdminUsers()
-    })
+  navContentDiv.innerHTML = adminNavbarTemplate()
+  getUsers(token).then((result) => {
+    const { users } = result.data
+    mainContentDiv.innerHTML = allUsersTemplate(users)
+    setupAdminUsers()
+  })
+}
+
+function setupLoggedOutView() {
+  if (window.location.href.includes('#/login')) {
+    navContentDiv.innerHTML = navbarTemplate(isLoggedIn)
+    mainContentDiv.innerHTML = loginFormTemplate()
+    setUpLoginForm()
+  } else if (window.location.href.includes('#/register')) {
+    navContentDiv.innerHTML = navbarTemplate(isLoggedIn)
+    mainContentDiv.innerHTML = registerTemplate()
+    setupRegisterForm()
   } else {
-    navContentDiv.innerHTML = navbarTemplate(true)
+    navContentDiv.innerHTML = navbarTemplate(isLoggedIn)
+    window.location.href = '/#/snacks'
     setupSnacks().then((snacks) => {
       mainContentDiv.innerHTML = allSnacksTemplate(snacks)
     })
   }
 }
 
+function loadHome() {
+  if (window.location.href.endsWith('#/snacks')) {
+    navContentDiv.innerHTML = isAdmin? adminNavbarTemplate() : navbarTemplate(true)
+    setupSnacks().then((snacks) => {
+      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+    })
+  } else if (window.location.href.includes('#/snacks')) {
+    navContentDiv.innerHTML = isAdmin? adminNavbarTemplate() : navbarTemplate(true)
+    const snackId = window.location.href.split('/')[5]
+    getSnack(snackId).then((snack) => {
+      mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+    })
+  } else if (window.location.href.includes('#/logout')) {
+    window.localStorage.removeItem('token')
+    redirectTo('#/login')
+  } else { // fallback route
+    navContentDiv.innerHTML = isAdmin? adminNavbarTemplate() : navbarTemplate(true)
+    setupSnacks().then((snacks) => {
+      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+    })
+  }
+}
+
+function setupHome() {
+  const token = window.localStorage.getItem('token')
+  if(token) {
+    getMyInfo(token).then(result => {
+      const user = result.data
+      isLoggedIn = true
+      isAdmin = user.admin
+      if(isAdmin) {
+        setupAdmin()
+      } else {
+        loadHome()
+      }
+    }).catch(console.error)
+  }
+
+  else {
+    setupLoggedOutView()
+  } 
+}
+
 setupHome()
-window.addEventListener('hashchange', setupHome, false)
+window.addEventListener('hashchange', loadHome, false)
 
 },{"./admin":1,"./allSnacks":2,"./login":4,"./register":6,"./requests/users":8,"./templates/adminNavbar":9,"./templates/allSnacks":10,"./templates/allUsers":11,"./templates/loginForm":12,"./templates/navbar":13,"./templates/registerForm":14,"./templates/viewOneSnack":15,"./viewOne":16}],6:[function(require,module,exports){
 const userRequests = require('./requests/users')
@@ -242,14 +272,13 @@ module.exports = {
     },
     login(body) {
         return axios.post(`${baseURL}/auth/login`, body)
-    }
-    
+    }  
 }
 },{"../constants":3,"axios":17}],9:[function(require,module,exports){
 function adminNavbarTemplate() {
   return `
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-grey scrolling-navbar">
-        <a class="navbar-brand" href="#"><strong>Galvanize Snacks</strong></a>
+        <a class="navbar-brand" href="#/snacks"><strong>Galvanize Snacks</strong></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -259,21 +288,21 @@ function adminNavbarTemplate() {
                     <a class="nav-link" href="#">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">All Snacks</a>
+                    <a class="nav-link" href="#/snacks">All Snacks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">My Reviews</a>
+                    <a class="nav-link" href="#/user">My Reviews</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Add Snack</a>
+                    <a class="nav-link" href="#/snacks/new">Add Snack</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">All Users<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="#/admin">All Users<span class="sr-only">(current)</span></a>
                 </li>
             </ul>
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
-                    <a class="nav-link loginLink">Log Out</i></a>
+                    <a class="nav-link loginLink" href="#/logout">Log Out</i></a>
                 </li>
             </ul>
         </div>
@@ -402,9 +431,6 @@ function navbarTemplate(loggedIn) {
                 ${loggedIn ? `<li class="nav-item">
                     <a class="nav-link" href="#/user/reviews">My Reviews</a>
                 </li>` : ``}
-                <!-- <li class="nav-item">
-                    <a class="nav-link" href="#">Add Snack</a>
-                </li> -->
             </ul>
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
