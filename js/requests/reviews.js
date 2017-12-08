@@ -5,6 +5,9 @@ module.exports = {
     getAll() {
         return axios.get(`${baseURL}/api/reviews`)
     },
+    getAllForSnack(id) {
+        return axios.get(`${baseURL}/api/snacks/${id}/reviews`)
+    },
     find(id) {
         return axios.get(`${baseURL}/api/reviews/${id}`)
     },

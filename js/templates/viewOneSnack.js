@@ -1,39 +1,28 @@
-
 function viewOneSnackTemplate(snack) {
-  return `<div class='infoBox title'>
-      <div class='inputLine'>
-        <p>View a Snack</p>
+  return `<div class='container-fluid infoBox'>
+      <div class='title'>
+        <p class='strongP'>Snack Title</p>
       </div>
-    </div>
-    <div class='infoBox snackImg'>
-     <img src='${snack.img}' width=300 alt='An image of ${snack.name}'>
-    </div>
-    <div class='infoBox textInputs'>
-      <form>
+      <div class='snackImg'>
+        <p>Replace with img of snack</p>
+      </div>
+      <div>
         <div class='inputLine'>
-          <p>ID Number: ${snack.id}</p>
-          <input class='formInput' type='text' placeholder='ID Number'>
+          <p class='strongP'>ID Number: </p><span>5</span>
         </div>
         <div class='inputLine'>
-          <p>Name: </p><input class='formInput' type='text' placeholder='Name'>
+          <p class='strongP'>Name: </p><span>Name</span>
         </div>
         <div class='inputLine'>
-          <p>Rating: </p><select name="snack">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
+          <p class='strongP'>Average Rating: </p><span>5</span>
         </div>
         <div class='inputLine'>
-          <p>Price: </p><input class='formInput' type='text' placeholder='Price'>
+          <p class='strongP'>Price: </p><span>Price</span>
         </div>
         <div class='inputLine'>
-          <p>Description: </p><input class='formInput' type='text' placeholder='Description'>
+          <p class='strongP'>Description: </p><span>Gingerbread cake jelly pudding jelly beans. Fruitcake gingerbread wafer wafer gingerbread apple pie marshmallow. Biscuit jelly cookie dragée brownie dessert carrot cake macaroon bonbon. Unerdwear.com liquorice marshmallow fruitcake caramels dessert gingerbread.</span>
         </div>
-        <input type='submit' value='Add/Edit'>
-      </form>
+      </div>
     </div>`
 }
 

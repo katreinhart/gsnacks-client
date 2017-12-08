@@ -1,8 +1,15 @@
 const snackRequests = require('./requests/snacks')
+const reviewsRequests = require('./requests/reviews')
 
 function getSnack(id) {
-  return snackRequests.find(id)
-    .then(result => result.data.snacks)
+  const snackReviewPromise = reviewsRequests.getAllForSnack(id)
+  const snackPromise = snackRequests.find(id)
+
+  return Promise.all([snackReviewPromise, snackPromise]).then((result) => {
+    const [{ data: snackReviews }, { data: { snacks } }] = result
+    console.log(snackReviews, snacks)
+    return { snackReviews, snacks }
+  })
 }
 
 module.exports = {

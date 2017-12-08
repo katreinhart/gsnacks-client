@@ -20,9 +20,9 @@ body, html {
 
 .loginBox {
     position: fixed;
-    height: 450px;
+    height: 400px;
     width: 500px;
-    top: calc(50% - 175px);
+    top: calc(50% - 150px);
     left: calc(50% - 250px);
     background-color: #FFFFFF;
     padding: 30px;
@@ -53,12 +53,18 @@ body, html {
     max-height: 100%;
 }
 
-.mainBody {
-    margin-top: 75px;
-}
-
 .miniMenu {
     width: 100%;
+}
+
+.infoBox {
+    background-color: #999999;
+    width: 600px;
+    margin-top: 150px;
+}
+
+.strongP {
+    font-weight: 800;
 }
 
 .hidden {
