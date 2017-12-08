@@ -31,6 +31,7 @@ function setupAdminUsers() {
 module.exports = {
   setupAdminUsers,
 }
+
 },{"./requests/users":9}],2:[function(require,module,exports){
 const snackRequests = require('./requests/snacks')
 
@@ -149,12 +150,13 @@ function showOneSnack() {
   navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
   const snackId = window.location.href.split('/')[5]
   getSnack(snackId).then((snack) => {
+    
     mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
   })
 }
 
 function logOut() {
-  window.localStorage.removeItem('token')
+  window.localStorage.clear()
   isLoggedIn = false
   window.isAdmin = false
   redirectTo('#/login')
@@ -546,30 +548,35 @@ module.exports = {
 
 },{}],16:[function(require,module,exports){
 function viewOneSnackTemplate(snack) {
+  const adminButtons = window.isAdmin ? `
+    <button class='btn btn-sm btn-warning' id='edit-${snack.id}'>Edit</button>
+    <button class='btn btn-sm btn-danger' id='delete-${snack.id}'>Delete</button>
+  ` : ``
   return `<div class='container-fluid infoBox'>
       <div class='title'>
-        <p class='strongP'>Snack Title</p>
+        <h3 class='strongP pt-2'>${snack.name}</h3>
       </div>
       <div class='snackImg'>
-        <p>Replace with img of snack</p>
+        <img src='${snack.img}' width=300 alt='a picture of ${snack.name}'>
       </div>
       <div>
         <div class='inputLine'>
-          <p class='strongP'>ID Number: </p><span>5</span>
+          <p>ID Number: <span class='strongP'>${snack.id}</span></p>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Name: </p><span>Name</span>
+          <p>Name: <span class='strongP'>${snack.name}</span></p>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Average Rating: </p><span>5</span>
+          <p>Average Rating: <span class='strongP'>${snack.averageRating}</span></p>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Price: </p><span>Price</span>
+          <p>Price: <span class='strongP'>${snack.price}</span></p>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Description: </p><span>Gingerbread cake jelly pudding jelly beans. Fruitcake gingerbread wafer wafer gingerbread apple pie marshmallow. Biscuit jelly cookie dragée brownie dessert carrot cake macaroon bonbon. Unerdwear.com liquorice marshmallow fruitcake caramels dessert gingerbread.</span>
+          <p>Description: <span class='strongP'>${snack.description}</span></p>
         </div>
       </div>
+      ${adminButtons}
     </div>`
 }
 
@@ -587,8 +594,13 @@ function getSnack(id) {
 
   return Promise.all([snackReviewPromise, snackPromise]).then((result) => {
     const [{ data: snackReviews }, { data: { snacks } }] = result
-    console.log(snackReviews, snacks)
-    return { snackReviews, snacks }
+    let average = snackReviews.reviews.reduce((acc, item) => {
+      return acc + parseInt(item.rating)
+    }, 0) / 2
+    if(snackReviews.reviews.length < 1) average = 'N/A'
+    snacks.reviews = snackReviews.reviews
+    snacks.averageRating = average
+    return snacks
   })
 }
 

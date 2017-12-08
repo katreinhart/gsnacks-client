@@ -66,12 +66,13 @@ function showOneSnack() {
   navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
   const snackId = window.location.href.split('/')[5]
   getSnack(snackId).then((snack) => {
+    
     mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
   })
 }
 
 function logOut() {
-  window.localStorage.removeItem('token')
+  window.localStorage.clear()
   isLoggedIn = false
   window.isAdmin = false
   redirectTo('#/login')
