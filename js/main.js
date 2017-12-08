@@ -86,7 +86,9 @@ function setupLoggedOutView() {
     showSnacks()
   } else if (window.location.href.includes('#/snacks')) {
     showOneSnack()
-  } 
+  } else {
+    showSnacks()
+  }
 }
 
 function loadHome() {
