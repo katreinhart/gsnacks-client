@@ -101,7 +101,7 @@ const { allSnacksTemplate } = require('./templates/allSnacks')
 const { setupSnacks } = require('./allSnacks')
 
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
-const { getSnack } = require('./viewOne')
+const { getSnack, setupSnackButtons } = require('./viewOne')
 
 const {
   getAll: getUsers,
@@ -161,6 +161,7 @@ function showOneSnack() {
   const snackId = window.location.href.split('/')[5]
   getSnack(snackId).then((snack) => {
     mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+    setupSnackButtons() 
   })
 }
 
@@ -240,7 +241,7 @@ function setupHome() {
 setupHome()
 window.addEventListener('hashchange', loadHome, false)
 
-},{"./admin":1,"./allSnacks":2,"./login":4,"./register":6,"./requests/reviews":7,"./requests/users":9,"./templates/adminNavbar":10,"./templates/allSnacks":11,"./templates/allUsers":12,"./templates/loginForm":13,"./templates/navbar":14,"./templates/registerForm":15,"./templates/viewOneSnack":16,"./viewOne":17}],6:[function(require,module,exports){
+},{"./admin":1,"./allSnacks":2,"./login":4,"./register":6,"./requests/reviews":7,"./requests/users":9,"./templates/adminNavbar":11,"./templates/allSnacks":12,"./templates/allUsers":13,"./templates/loginForm":15,"./templates/navbar":16,"./templates/registerForm":17,"./templates/viewOneSnack":18,"./viewOne":19}],6:[function(require,module,exports){
 const userRequests = require('./requests/users')
 
 function processRegisterForm(e) {
@@ -310,7 +311,7 @@ module.exports = {
 }
 
 
-},{"../constants":3,"axios":18}],8:[function(require,module,exports){
+},{"../constants":3,"axios":20}],8:[function(require,module,exports){
 const { baseURL } = require('../constants')
 const axios = require('axios')
 
@@ -321,18 +322,18 @@ module.exports = {
     find(id) {
         return axios.get(`${baseURL}/api/snacks/${id}`)
     },
-    create(body) {
-        return axios.post(`${baseURL}/api/snacks`, body)
+    create(body, token) {
+        return axios.post(`${baseURL}/api/snacks`, body, { headers: { "Authorization": `Bearer ${token}` } })
     },
-    update(id, body) {
-        return axios.put(`${baseURL}/api/snacks/${id}`, body)
+    update(id, body, token) {
+        return axios.put(`${baseURL}/api/snacks/${id}`, body, { headers: { "Authorization": `Bearer ${token}` } })
     },
-    delete(id) {
-        return axios.delete(`${baseURL}/api/snacks/${id}`)
+    delete(id, token) {
+        return axios.delete(`${baseURL}/api/snacks/${id}`, { headers: { "Authorization": `Bearer ${token}` } })
     }
-    
 }
-},{"../constants":3,"axios":18}],9:[function(require,module,exports){
+
+},{"../constants":3,"axios":20}],9:[function(require,module,exports){
 const { baseURL } = require('../constants')
 const axios = require('axios')
 
@@ -359,7 +360,60 @@ module.exports = {
         return axios.post(`${baseURL}/auth/login`, body)
     }  
 }
-},{"../constants":3,"axios":18}],10:[function(require,module,exports){
+},{"../constants":3,"axios":20}],10:[function(require,module,exports){
+
+function addEditSnackTemplate(snack) {
+  if (!snack) {
+    snack = {
+      name: '', 
+      img: '', 
+      id: '', 
+      price: 0,
+      description: '',
+    }
+  }
+  return `<div class='infoBox title'>
+      <div class='inputLine'>
+        <p>Add/Edit Snack</p>
+      </div>
+    </div>
+    <div class='infoBox snackImg'>
+     <img src='${snack.img}' width=300 alt='An image of ${snack.name}'>
+    </div>
+    <div class='infoBox textInputs'>
+      <form>
+        <div class='inputLine'>
+          <p>ID Number: ${snack.id}</p>
+          <input class='formInput' type='text' placeholder='ID Number'>
+        </div>
+        <div class='inputLine'>
+          <p>Name: </p><input class='formInput' type='text' placeholder='Name'>
+        </div>
+        <div class='inputLine'>
+          <p>Rating: </p><select name="snack">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div class='inputLine'>
+          <p>Price: </p><input class='formInput' type='text' placeholder='Price'>
+        </div>
+        <div class='inputLine'>
+          <p>Description: </p><input class='formInput' type='text' placeholder='Description'>
+        </div>
+        <input type='submit' value='Add/Edit'>
+      </form>
+    </div>`
+}
+
+module.exports = {
+  addEditSnackTemplate,
+}
+
+},{}],11:[function(require,module,exports){
 function adminNavbarTemplate() {
   return `
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-grey scrolling-navbar">
@@ -399,7 +453,7 @@ module.exports = {
   adminNavbarTemplate,
 }
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 function allSnacksTemplate(snacks) {
   const snackDivContent = snacks.map(snack => `<div class='row allSnackRow'> <div class='row'>
         <div class='col-8'>
@@ -427,7 +481,7 @@ module.exports = {
   allSnacksTemplate,
 }
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 function allUsersTemplate(users) {
   const userDivContent = users.map(user => `<div class='row allSnackRow'>
         <div class='row userRow'>
@@ -462,7 +516,48 @@ module.exports = {
   allUsersTemplate,
 }
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
+function editOneSnackTemplate(snack) {
+  return `
+  <div class='container-fluid infoBox'>
+    <div class='title'>
+      <div class='inputLine'>
+        <p class='strongP'>Edit Snack #${snack.id}</p>
+      </div>
+    </div>
+    <div class='textInputs'>
+      <form id='edit-snack-${snack.id}'>
+        
+        <div class='inputLine'>
+          <p class='strongP'>Name: </p><input class='formInput' id='snack_name' type='text' placeholder='Name' value='${snack.name}'>
+        </div>
+        <div class='inputLine'>
+          <p class='strongP'>Image: </p><input class='formInput' id='snack_img' type='text' placeholder='An image of the snack.' value='${snack.img}'>
+        </div>
+        <div class='inputLine'>
+          <p class='strongP'>Price: </p><input class='formInput' id='snack_price' type='text' placeholder='Price' value='${snack.price}'>
+        </div>
+        <div class='inputLine'>
+          <p class='strongP'>Description: </p><input class='formInput' id='snack_description' type='text' 
+            placeholder='Gingerbread cake jelly pudding jelly beans. Fruitcake gingerbread wafer wafer gingerbread apple pie marshmallow. Biscuit jelly cookie dragée brownie dessert carrot cake macaroon bonbon. Unerdwear.com liquorice marshmallow fruitcake caramels dessert gingerbread.'
+            value='${snack.description}'  
+          >
+        </div>
+        <div class='inputLine'>
+          <p class='strongP'>Perishable: </p>  
+          <input type='checkbox' id='snack_is_perish' checked=${snack.isPerishable}>
+        </div>
+        <input type='submit' value='Add/Edit'>
+      </form>
+    </div>
+  </div>`
+}
+
+module.exports = {
+  editOneSnackTemplate,
+}
+
+},{}],15:[function(require,module,exports){
 
 function loginFormTemplate() {
   return `
@@ -494,7 +589,7 @@ module.exports = {
   loginFormTemplate,
 }
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 function navbarTemplate(loggedIn) {
     let logLink
     if(loggedIn) {
@@ -537,7 +632,7 @@ module.exports = {
   navbarTemplate,
 }
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 
 function registerTemplate() {
   return `
@@ -574,11 +669,11 @@ module.exports = {
   registerTemplate,
 }
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 function viewOneSnackTemplate(snack) {
   const adminButtons = window.isAdmin ? `
-    <button class='btn btn-sm btn-warning' id='edit-${snack.id}'>Edit</button>
-    <button class='btn btn-sm btn-danger' id='delete-${snack.id}'>Delete</button>
+    <button class='btn btn-sm btn-warning' id='edit-${snack.id}'>Edit Snack</button>
+    <button class='btn btn-sm btn-danger' id='delete-${snack.id}'>Delete Snack</button>
   ` : ``
   return `<div class='container-fluid infoBox'>
       <div class='title'>
@@ -603,8 +698,9 @@ function viewOneSnackTemplate(snack) {
         <div class='inputLine'>
           <p>Description: <span class='strongP'>${snack.description}</span></p>
         </div>
+        
       </div>
-      ${adminButtons}
+      <button class='btn btn-info btn-sm' id='review-${snack.id}'>Review ${snack.name}</button> ${adminButtons}
     </div>`
 }
 
@@ -612,9 +708,16 @@ module.exports = {
   viewOneSnackTemplate,
 }
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 const snackRequests = require('./requests/snacks')
 const reviewsRequests = require('./requests/reviews')
+
+const { addEditSnackTemplate } = require('./templates/addEditSnack')
+const { editOneSnackTemplate } = require('./templates/editSnack')
+
+const { update: editSnackRequest } = require('./requests/snacks')
+
+const mainContentDiv = document.getElementById('main-content')
 
 function getSnack(id) {
   const snackReviewPromise = reviewsRequests.getAllForSnack(id)
@@ -622,23 +725,54 @@ function getSnack(id) {
 
   return Promise.all([snackReviewPromise, snackPromise]).then((result) => {
     const [{ data: snackReviews }, { data: { snacks } }] = result
-    let average = snackReviews.reviews.reduce((acc, item) => {
-      return acc + parseInt(item.rating)
-    }, 0) / 2
-    if(snackReviews.reviews.length < 1) average = 'N/A'
+    let average = snackReviews.reviews
+      .reduce((acc, item) => acc + parseInt(item.rating, 10), 0) / snackReviews.length
+    if (snackReviews.reviews.length < 1) average = 'N/A'
     snacks.reviews = snackReviews.reviews
     snacks.averageRating = average
     return snacks
   })
 }
 
-module.exports = {
-  getSnack,
+function setupSnackButtons() {
+  const snackId = window.location.hash.split('/')[2]
+  if (window.isAdmin) {
+    document.getElementById(`edit-${snackId}`).addEventListener('click', (e) => {
+      getSnack(snackId).then((snack) => {
+        mainContentDiv.innerHTML += editOneSnackTemplate(snack)
+        const token = window.localStorage.getItem('token')
+        document.getElementById(`edit-snack-${snackId}`).addEventListener('submit', (e) => {
+          e.preventDefault()
+          const name = document.getElementById('snack_name').value
+          const img = document.getElementById('snack_img').value
+          const price = document.getElementById('snack_price').value
+          const description = document.getElementById('snack_description').value
+          const isPerishable = document.getElementById('snack_is_perish').value
+          const updatedSnack = { name, img, price, description, is_perishable: isPerishable }
+          editSnackRequest(snackId, updatedSnack, token).then((result) => {
+            window.location.reload()
+          }).catch(console.error)
+        })
+      })
+    })
+    document.getElementById(`delete-${snackId}`).addEventListener('click', (e) => {
+      console.log('delete snack')
+
+    })
+  }
+  document.getElementById(`review-${snackId}`).addEventListener('click', (e) => {
+    console.log('review this snack')
+  })
 }
 
-},{"./requests/reviews":7,"./requests/snacks":8}],18:[function(require,module,exports){
+module.exports = {
+  getSnack,
+  setupSnackButtons,
+}
+
+},{"./requests/reviews":7,"./requests/snacks":8,"./templates/addEditSnack":10,"./templates/editSnack":14}],20:[function(require,module,exports){
 module.exports = require('./lib/axios');
-},{"./lib/axios":20}],19:[function(require,module,exports){
+},{"./lib/axios":22}],21:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -822,7 +956,7 @@ module.exports = function xhrAdapter(config) {
 };
 
 }).call(this,require('_process'))
-},{"../core/createError":26,"./../core/settle":29,"./../helpers/btoa":33,"./../helpers/buildURL":34,"./../helpers/cookies":36,"./../helpers/isURLSameOrigin":38,"./../helpers/parseHeaders":40,"./../utils":42,"_process":44}],20:[function(require,module,exports){
+},{"../core/createError":28,"./../core/settle":31,"./../helpers/btoa":35,"./../helpers/buildURL":36,"./../helpers/cookies":38,"./../helpers/isURLSameOrigin":40,"./../helpers/parseHeaders":42,"./../utils":44,"_process":46}],22:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -876,7 +1010,7 @@ module.exports = axios;
 // Allow use of default import syntax in TypeScript
 module.exports.default = axios;
 
-},{"./cancel/Cancel":21,"./cancel/CancelToken":22,"./cancel/isCancel":23,"./core/Axios":24,"./defaults":31,"./helpers/bind":32,"./helpers/spread":41,"./utils":42}],21:[function(require,module,exports){
+},{"./cancel/Cancel":23,"./cancel/CancelToken":24,"./cancel/isCancel":25,"./core/Axios":26,"./defaults":33,"./helpers/bind":34,"./helpers/spread":43,"./utils":44}],23:[function(require,module,exports){
 'use strict';
 
 /**
@@ -897,7 +1031,7 @@ Cancel.prototype.__CANCEL__ = true;
 
 module.exports = Cancel;
 
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 var Cancel = require('./Cancel');
@@ -956,14 +1090,14 @@ CancelToken.source = function source() {
 
 module.exports = CancelToken;
 
-},{"./Cancel":21}],23:[function(require,module,exports){
+},{"./Cancel":23}],25:[function(require,module,exports){
 'use strict';
 
 module.exports = function isCancel(value) {
   return !!(value && value.__CANCEL__);
 };
 
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 var defaults = require('./../defaults');
@@ -1044,7 +1178,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = Axios;
 
-},{"./../defaults":31,"./../utils":42,"./InterceptorManager":25,"./dispatchRequest":27}],25:[function(require,module,exports){
+},{"./../defaults":33,"./../utils":44,"./InterceptorManager":27,"./dispatchRequest":29}],27:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1098,7 +1232,7 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 module.exports = InterceptorManager;
 
-},{"./../utils":42}],26:[function(require,module,exports){
+},{"./../utils":44}],28:[function(require,module,exports){
 'use strict';
 
 var enhanceError = require('./enhanceError');
@@ -1118,7 +1252,7 @@ module.exports = function createError(message, config, code, request, response) 
   return enhanceError(error, config, code, request, response);
 };
 
-},{"./enhanceError":28}],27:[function(require,module,exports){
+},{"./enhanceError":30}],29:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1206,7 +1340,7 @@ module.exports = function dispatchRequest(config) {
   });
 };
 
-},{"../cancel/isCancel":23,"../defaults":31,"./../helpers/combineURLs":35,"./../helpers/isAbsoluteURL":37,"./../utils":42,"./transformData":30}],28:[function(require,module,exports){
+},{"../cancel/isCancel":25,"../defaults":33,"./../helpers/combineURLs":37,"./../helpers/isAbsoluteURL":39,"./../utils":44,"./transformData":32}],30:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1229,7 +1363,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
   return error;
 };
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 var createError = require('./createError');
@@ -1257,7 +1391,7 @@ module.exports = function settle(resolve, reject, response) {
   }
 };
 
-},{"./createError":26}],30:[function(require,module,exports){
+},{"./createError":28}],32:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1279,7 +1413,7 @@ module.exports = function transformData(data, headers, fns) {
   return data;
 };
 
-},{"./../utils":42}],31:[function(require,module,exports){
+},{"./../utils":44}],33:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -1375,7 +1509,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 }).call(this,require('_process'))
-},{"./adapters/http":19,"./adapters/xhr":19,"./helpers/normalizeHeaderName":39,"./utils":42,"_process":44}],32:[function(require,module,exports){
+},{"./adapters/http":21,"./adapters/xhr":21,"./helpers/normalizeHeaderName":41,"./utils":44,"_process":46}],34:[function(require,module,exports){
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -1388,7 +1522,7 @@ module.exports = function bind(fn, thisArg) {
   };
 };
 
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 // btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
@@ -1426,7 +1560,7 @@ function btoa(input) {
 
 module.exports = btoa;
 
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1496,7 +1630,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
   return url;
 };
 
-},{"./../utils":42}],35:[function(require,module,exports){
+},{"./../utils":44}],37:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1512,7 +1646,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
     : baseURL;
 };
 
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1567,7 +1701,7 @@ module.exports = (
   })()
 );
 
-},{"./../utils":42}],37:[function(require,module,exports){
+},{"./../utils":44}],39:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1583,7 +1717,7 @@ module.exports = function isAbsoluteURL(url) {
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 };
 
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1653,7 +1787,7 @@ module.exports = (
   })()
 );
 
-},{"./../utils":42}],39:[function(require,module,exports){
+},{"./../utils":44}],41:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -1667,7 +1801,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
   });
 };
 
-},{"../utils":42}],40:[function(require,module,exports){
+},{"../utils":44}],42:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1722,7 +1856,7 @@ module.exports = function parseHeaders(headers) {
   return parsed;
 };
 
-},{"./../utils":42}],41:[function(require,module,exports){
+},{"./../utils":44}],43:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1751,7 +1885,7 @@ module.exports = function spread(callback) {
   };
 };
 
-},{}],42:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 
 var bind = require('./helpers/bind');
@@ -2056,7 +2190,7 @@ module.exports = {
   trim: trim
 };
 
-},{"./helpers/bind":32,"is-buffer":43}],43:[function(require,module,exports){
+},{"./helpers/bind":34,"is-buffer":45}],45:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -2079,7 +2213,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],44:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 

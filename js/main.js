@@ -9,7 +9,7 @@ const { allSnacksTemplate } = require('./templates/allSnacks')
 const { setupSnacks } = require('./allSnacks')
 
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
-const { getSnack } = require('./viewOne')
+const { getSnack, setupSnackButtons } = require('./viewOne')
 
 const {
   getAll: getUsers,
@@ -69,6 +69,7 @@ function showOneSnack() {
   const snackId = window.location.href.split('/')[5]
   getSnack(snackId).then((snack) => {
     mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+    setupSnackButtons() 
   })
 }
 
