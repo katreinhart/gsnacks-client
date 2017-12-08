@@ -11,7 +11,7 @@ function allUsersTemplate(users) {
             <p>Admin: ${user.admin}</p>
             <a href='/#/users/${user.id}/reviews'><p>User's Reviews Link</p></a>
             <ul>
-              ${user.admin ? '' : `<li><button class='delete-user' id='delete-user${user.id}'>Delete</button></li>`}
+              ${user.admin ? '' : `<li><button class='delete-user' id='delete-user-${user.id}'>Delete</button></li>`}
               ${user.admin ? '' : `<li><button class='admin-user' id='admin-user-${user.id}'>Make Admin</button></li>`}
             </ul>
           </div>

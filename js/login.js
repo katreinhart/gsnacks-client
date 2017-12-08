@@ -9,7 +9,6 @@ function processLoginForm(e) {
       window.localStorage.setItem('token', result.data.token)
       window.isLoggedIn = true
       userRequests.getUser(result.data.token).then((user) => {
-        console.log(user.data.admin)
         if (user.data.admin) {
           window.location.href = '#/admin'
         } else {

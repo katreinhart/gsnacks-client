@@ -2,9 +2,8 @@
 // pull all users template and turn into admin dashboard
 const userRoutes = require('./requests/users')
 
-const token = window.localStorage.getItem('token')
-
 function makeUserAdmin(e) {
+  const token = window.localStorage.getItem('token')
   const userId = e.target.id.split('-')[2]
   userRoutes.edit(userId, { admin: true }, token).then((result) => {
     window.location.href = '#/admin'
@@ -12,10 +11,13 @@ function makeUserAdmin(e) {
 }
 
 function deleteUser(e) {
+  const token = window.localStorage.getItem('token')
   const userId = e.target.id.split('-')[2]
+  // probably want to replace this with a fancy modal confirm instead of an ugly js confirm
   confirm('Are you sure?')
   userRoutes.delete(userId, token).then((result) => {
     window.location.href = '#/admin'
+    window.location.reload()
   }).catch(console.error)
 }
 
@@ -63,7 +65,6 @@ function processLoginForm(e) {
       window.localStorage.setItem('token', result.data.token)
       window.isLoggedIn = true
       userRequests.getUser(result.data.token).then((user) => {
-        console.log(user.data.admin)
         if (user.data.admin) {
           window.location.href = '#/admin'
         } else {
@@ -106,6 +107,8 @@ const {
   getAll: getUsers,
   getUser: getMyInfo,
 } = require('./requests/users')
+
+const { getAllForUser: getUserReviews } = require('./requests/reviews')
 
 const { adminNavbarTemplate } = require('./templates/adminNavbar')
 const { allUsersTemplate } = require('./templates/allUsers')
@@ -161,6 +164,16 @@ function showOneSnack() {
   })
 }
 
+function showOneUser() {
+  navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
+  const userId = window.location.href.split('/')[5]
+  getUserReviews(userId).then((result) => {
+    const { reviews } = result.data
+    console.log(reviews)
+    // mainContentDiv.innerHTML = viewUsersReviewsTemplate(reviews)
+  })
+}
+
 function logOut() {
   window.localStorage.clear()
   isLoggedIn = false
@@ -191,10 +204,12 @@ function loadHome() {
     logOut()
   } else if (window.location.href.includes('#/login')) {
     setupLogin()
-  } else if(window.location.href.includes('#/register')) {
+  } else if (window.location.href.includes('#/register')) {
     setupRegister()
-  } else if(window.location.href.includes('#/admin')) {
+  } else if (window.location.href.includes('#/admin')) {
     setupAdmin()
+  } else if (window.location.href.includes('#/users')) {
+    showOneUser()
   } else { 
     showSnacks()
   }
@@ -208,9 +223,7 @@ function setupHome() {
       isLoggedIn = true
       window.isAdmin = user.admin
       if(window.isAdmin) {
-        console.log('ur admin')
         setupAdmin()
-        console.log('ur still admin')
       } else {
         loadHome()
       }
@@ -227,7 +240,7 @@ function setupHome() {
 setupHome()
 window.addEventListener('hashchange', loadHome, false)
 
-},{"./admin":1,"./allSnacks":2,"./login":4,"./register":6,"./requests/users":9,"./templates/adminNavbar":10,"./templates/allSnacks":11,"./templates/allUsers":12,"./templates/loginForm":13,"./templates/navbar":14,"./templates/registerForm":15,"./templates/viewOneSnack":16,"./viewOne":17}],6:[function(require,module,exports){
+},{"./admin":1,"./allSnacks":2,"./login":4,"./register":6,"./requests/reviews":7,"./requests/users":9,"./templates/adminNavbar":10,"./templates/allSnacks":11,"./templates/allUsers":12,"./templates/loginForm":13,"./templates/navbar":14,"./templates/registerForm":15,"./templates/viewOneSnack":16,"./viewOne":17}],6:[function(require,module,exports){
 const userRequests = require('./requests/users')
 
 function processRegisterForm(e) {
@@ -278,6 +291,9 @@ module.exports = {
     },
     getAllForSnack(id) {
         return axios.get(`${baseURL}/api/snacks/${id}/reviews`)
+    },
+    getAllForUser(id, token) {
+        return axios.get(`${baseURL}/api/users/${id}/reviews`, { headers: { "Authorization": `Bearer ${token}` } })
     },
     find(id) {
         return axios.get(`${baseURL}/api/reviews/${id}`)
@@ -334,7 +350,7 @@ module.exports = {
         return axios.patch(`${baseURL}/api/users/${id}`, body, { headers: { "Authorization": `Bearer ${token}` } })
     },
     delete(id, token) {
-        return axios.delete(`${baseURL}/api/users/${id}`, { headers: { "Authorization": `Bearer ${token}` } })
+        return axios.delete(`${baseURL}/api/users/${id}`, { headers: { "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsiaWQiOjN9LCJpYXQiOjE1MTI3NzAyODIsImV4cCI6MTUxMzk3OTg4Mn0.-A0g5UUM-izDXUDxy73mCNU7K51rkpCczJdXdlnAZFo` } })
     },
     register(body) {
         return axios.post(`${baseURL}/auth/register`, body)
@@ -425,7 +441,7 @@ function allUsersTemplate(users) {
             <p>Admin: ${user.admin}</p>
             <a href='/#/users/${user.id}/reviews'><p>User's Reviews Link</p></a>
             <ul>
-              ${user.admin ? '' : `<li><button class='delete-user' id='delete-user${user.id}'>Delete</button></li>`}
+              ${user.admin ? '' : `<li><button class='delete-user' id='delete-user-${user.id}'>Delete</button></li>`}
               ${user.admin ? '' : `<li><button class='admin-user' id='admin-user-${user.id}'>Make Admin</button></li>`}
             </ul>
           </div>

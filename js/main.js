@@ -16,6 +16,8 @@ const {
   getUser: getMyInfo,
 } = require('./requests/users')
 
+const { getAllForUser: getUserReviews } = require('./requests/reviews')
+
 const { adminNavbarTemplate } = require('./templates/adminNavbar')
 const { allUsersTemplate } = require('./templates/allUsers')
 const { setupAdminUsers } = require('./admin')
@@ -70,6 +72,16 @@ function showOneSnack() {
   })
 }
 
+function showOneUser() {
+  navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
+  const userId = window.location.href.split('/')[5]
+  getUserReviews(userId).then((result) => {
+    const { reviews } = result.data
+    console.log(reviews)
+    // mainContentDiv.innerHTML = viewUsersReviewsTemplate(reviews)
+  })
+}
+
 function logOut() {
   window.localStorage.clear()
   isLoggedIn = false
@@ -100,10 +112,12 @@ function loadHome() {
     logOut()
   } else if (window.location.href.includes('#/login')) {
     setupLogin()
-  } else if(window.location.href.includes('#/register')) {
+  } else if (window.location.href.includes('#/register')) {
     setupRegister()
-  } else if(window.location.href.includes('#/admin')) {
+  } else if (window.location.href.includes('#/admin')) {
     setupAdmin()
+  } else if (window.location.href.includes('#/users')) {
+    showOneUser()
   } else { 
     showSnacks()
   }
@@ -117,9 +131,7 @@ function setupHome() {
       isLoggedIn = true
       window.isAdmin = user.admin
       if(window.isAdmin) {
-        console.log('ur admin')
         setupAdmin()
-        console.log('ur still admin')
       } else {
         loadHome()
       }

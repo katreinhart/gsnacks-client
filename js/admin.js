@@ -1,9 +1,8 @@
 // pull all users template and turn into admin dashboard
 const userRoutes = require('./requests/users')
 
-const token = window.localStorage.getItem('token')
-
 function makeUserAdmin(e) {
+  const token = window.localStorage.getItem('token')
   const userId = e.target.id.split('-')[2]
   userRoutes.edit(userId, { admin: true }, token).then((result) => {
     window.location.href = '#/admin'
@@ -11,10 +10,13 @@ function makeUserAdmin(e) {
 }
 
 function deleteUser(e) {
+  const token = window.localStorage.getItem('token')
   const userId = e.target.id.split('-')[2]
+  // probably want to replace this with a fancy modal confirm instead of an ugly js confirm
   confirm('Are you sure?')
   userRoutes.delete(userId, token).then((result) => {
     window.location.href = '#/admin'
+    window.location.reload()
   }).catch(console.error)
 }
 
