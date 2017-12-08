@@ -2,6 +2,9 @@ const { baseURL } = require('../constants')
 const axios = require('axios')
 
 module.exports = {
+    getUser(token) {
+        return axios.get(`${baseURL}/auth`, { headers: { "Authorization": `Bearer ${token}` } })
+    },
     getAll(token) {
         return axios.get(`${baseURL}/api/users`, { headers: { "Authorization": `Bearer ${token}` } })
     },

@@ -11,7 +11,11 @@ const { setupSnacks } = require('./allSnacks')
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
 const { getSnack } = require('./viewOne')
 
-const { getAll: getUsers } = require('./requests/users')
+const {
+  getAll: getUsers,
+  getUser: getMyInfo,
+} = require('./requests/users')
+
 const { adminNavbarTemplate } = require('./templates/adminNavbar')
 const { allUsersTemplate } = require('./templates/allUsers')
 const { setupAdminUsers } = require('./admin')
@@ -21,6 +25,7 @@ const navContentDiv = document.getElementById('nav-content')
 
 function setupHome() {
   const token = window.localStorage.getItem('token')
+  getMyInfo(token).then(console.log)
   if (!token) {
     if (window.location.href.includes('#/login')) {
       navContentDiv.innerHTML = navbarTemplate(false)
