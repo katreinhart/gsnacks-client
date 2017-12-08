@@ -8,7 +8,14 @@ function processLoginForm(e) {
     .then((result) => {
       window.localStorage.setItem('token', result.data.token)
       window.isLoggedIn = true
-      window.location.href = '#/snacks'
+      userRequests.getUser(result.data.token).then((user) => {
+        console.log(user.data.admin)
+        if (user.data.admin) {
+          window.location.href = '#/admin'
+        } else {
+          window.location.href = '#/snacks'
+        }
+      })
     })
     .catch((err) => {
       console.error(err)

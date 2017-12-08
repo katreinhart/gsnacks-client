@@ -35,7 +35,7 @@ function setupAdmin() {
   const token = window.localStorage.getItem('token')
   navContentDiv.innerHTML = adminNavbarTemplate()
   getUsers(token).then((result) => {
-    window.location.hash = ('/users')
+    window.location.hash = ('/admin')
     const { users } = result.data
     mainContentDiv.innerHTML = allUsersTemplate(users)
     setupAdminUsers()
@@ -66,7 +66,6 @@ function showOneSnack() {
   navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
   const snackId = window.location.href.split('/')[5]
   getSnack(snackId).then((snack) => {
-    
     mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
   })
 }
@@ -101,6 +100,8 @@ function loadHome() {
     setupLogin()
   } else if(window.location.href.includes('#/register')) {
     setupRegister()
+  } else if(window.location.href.includes('#/admin')) {
+    setupAdmin()
   } else { 
     showSnacks()
   }
@@ -114,7 +115,9 @@ function setupHome() {
       isLoggedIn = true
       window.isAdmin = user.admin
       if(window.isAdmin) {
+        console.log('ur admin')
         setupAdmin()
+        console.log('ur still admin')
       } else {
         loadHome()
       }
