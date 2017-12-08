@@ -1,7 +1,7 @@
 function viewOneSnackTemplate(snack) {
   return `<div class='container-fluid infoBox'>
       <div class='title'>
-        <p> class='strongP'Snack Title</p>
+        <p class='strongP'>Snack Title</p>
       </div>
       <div class='snackImg'>
         <p>Replace with img of snack</p>
