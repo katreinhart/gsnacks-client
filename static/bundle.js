@@ -57,12 +57,9 @@ function processLoginForm(e) {
   if (e.preventDefault) e.preventDefault()
   const email = e.srcElement[0].value
   const password = e.srcElement[1].value
-  const rememberMe = e.srcElement[2].checked
   return userRequests.login({ email, password })
     .then((result) => {
-      if (rememberMe) {
-        window.localStorage.setItem('token', result.data.token)
-      }
+      window.localStorage.setItem('token', result.data.token)
       window.isLoggedIn = true
       window.location.href = '#/snacks'
     })
@@ -186,7 +183,7 @@ function loadHome() {
     setupLogin()
   } else if(window.location.href.includes('#/register')) {
     setupRegister()
-  } else { // fallback route
+  } else { 
     showSnacks()
   }
 }
@@ -203,7 +200,9 @@ function setupHome() {
       } else {
         loadHome()
       }
-    }).catch(console.error)
+    }).catch((err => {
+      window.localStorage.removeItem('token')
+    }))
   }
 
   else {
@@ -224,14 +223,18 @@ function processRegisterForm(e) {
   const email = e.srcElement[2].value
   const password = e.srcElement[3].value
 
-  userRequests.register({ first_name: fname, last_name: lname, email, password })
+  userRequests.register({
+    first_name: fname,
+    last_name: lname,
+    email,
+    password,
+  })
     .then((result) => {
       window.localStorage.setItem('token', result.data.token)
       window.isLoggedIn = true
       window.location.href = '#/snacks'
     })
     .catch((err) => {
-      console.error(err)
       document.getElementById('used-email-error').classList.remove('hidden')
     })
 }

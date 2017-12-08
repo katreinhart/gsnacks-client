@@ -100,7 +100,7 @@ function loadHome() {
     setupLogin()
   } else if(window.location.href.includes('#/register')) {
     setupRegister()
-  } else { // fallback route
+  } else { 
     showSnacks()
   }
 }
@@ -117,7 +117,9 @@ function setupHome() {
       } else {
         loadHome()
       }
-    }).catch(console.error)
+    }).catch((err => {
+      window.localStorage.removeItem('token')
+    }))
   }
 
   else {
