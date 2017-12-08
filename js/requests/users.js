@@ -2,17 +2,17 @@ const { baseURL } = require('../constants')
 const axios = require('axios')
 
 module.exports = {
-    getAll() {
-        return axios.get(`${baseURL}/api/users`)
+    getAll(token) {
+        return axios.get(`${baseURL}/api/users`, { headers: { "Authorization": `Bearer ${token}` } })
     },
     find(id) {
         return axios.get(`${baseURL}/api/users/${id}`)
     },
-    edit(id, body) {
-        return axios.patch(`${baseURL}/api/users/${id}`, body)
+    edit(id, body, token) {
+        return axios.patch(`${baseURL}/api/users/${id}`, body, { headers: { "Authorization": `Bearer ${token}` } })
     },
-    delete(id) {
-        return axios.delete(`${baseURL}/api/users/${id}`)
+    delete(id, token) {
+        return axios.delete(`${baseURL}/api/users/${id}`, { headers: { "Authorization": `Bearer ${token}` } })
     },
     register(body) {
         return axios.post(`${baseURL}/auth/register`, body)

@@ -1,4 +1,37 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// pull all users template and turn into admin dashboard
+const userRoutes = require('./requests/users')
+
+const token = window.localStorage.getItem('token')
+
+function makeUserAdmin(e) {
+  const userId = e.target.id.split('-')[2]
+  userRoutes.edit(userId, { admin: true }, token).then((result) => {
+    window.location.href = '#/admin'
+  })
+}
+
+function deleteUser(e) {
+  const userId = e.target.id.split('-')[2]
+  confirm('Are you sure?')
+  userRoutes.delete(userId, token).then((result) => {
+    window.location.href = '#/admin'
+  }).catch(console.error)
+}
+
+function setupAdminUsers() {
+  Array.from(document.querySelectorAll('.admin-user')).forEach((userButton) => {
+    userButton.addEventListener('click', makeUserAdmin)
+  })
+  Array.from(document.querySelectorAll('.delete-user')).forEach((deleteButton) => {
+    deleteButton.addEventListener('click', deleteUser)
+  })
+}
+
+module.exports = {
+  setupAdminUsers,
+}
+},{"./requests/users":8}],2:[function(require,module,exports){
 const snackRequests = require('./requests/snacks')
 
 function setupSnacks() {
@@ -10,14 +43,14 @@ module.exports = {
   setupSnacks,
 }
 
-},{"./requests/snacks":6}],2:[function(require,module,exports){
+},{"./requests/snacks":7}],3:[function(require,module,exports){
 const baseURL = 'http://localhost:3000'
 
 module.exports = {
   baseURL,
 }
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 const userRequests = require('./requests/users')
 
 function processLoginForm(e) {
@@ -49,7 +82,7 @@ module.exports = {
   setUpLoginForm,
 }
 
-},{"./requests/users":7}],4:[function(require,module,exports){
+},{"./requests/users":8}],5:[function(require,module,exports){
 const { setupRegisterForm } = require('./register')
 const { setUpLoginForm } = require('./login')
 
@@ -62,6 +95,11 @@ const { setupSnacks } = require('./allSnacks')
 
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
 const { getSnack } = require('./viewOne')
+
+const { getAll: getUsers } = require('./requests/users')
+const { adminNavbarTemplate } = require('./templates/adminNavbar')
+const { allUsersTemplate } = require('./templates/allUsers')
+const { setupAdminUsers } = require('./admin')
 
 const mainContentDiv = document.getElementById('main-content')
 const navContentDiv = document.getElementById('nav-content')
@@ -91,7 +129,6 @@ function setupHome() {
     })
   } else if (window.location.href.includes('#/snacks')) {
     navContentDiv.innerHTML = navbarTemplate(true)
-    console.log('display one snack')
     const snackId = window.location.href.split('/')[5]
     getSnack(snackId).then((snack) => {
       mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
@@ -99,6 +136,14 @@ function setupHome() {
   } else if (window.location.href.includes('#/logout')) {
     window.localStorage.removeItem('token')
     window.location.href = '#/login'
+  } else if (window.location.href.includes('#/admin')) {
+    // verify actual admin status
+    navContentDiv.innerHTML = adminNavbarTemplate()
+    getUsers(token).then((result) => {
+      const { users } = result.data
+      mainContentDiv.innerHTML = allUsersTemplate(users)
+      setupAdminUsers()
+    })
   } else {
     navContentDiv.innerHTML = navbarTemplate(true)
     setupSnacks().then((snacks) => {
@@ -110,7 +155,7 @@ function setupHome() {
 setupHome()
 window.addEventListener('hashchange', setupHome, false)
 
-},{"./allSnacks":1,"./login":3,"./register":5,"./templates/allSnacks":8,"./templates/loginForm":9,"./templates/navbar":10,"./templates/registerForm":11,"./templates/viewOneSnack":12,"./viewOne":13}],5:[function(require,module,exports){
+},{"./admin":1,"./allSnacks":2,"./login":4,"./register":6,"./requests/users":8,"./templates/adminNavbar":9,"./templates/allSnacks":10,"./templates/allUsers":11,"./templates/loginForm":12,"./templates/navbar":13,"./templates/registerForm":14,"./templates/viewOneSnack":15,"./viewOne":16}],6:[function(require,module,exports){
 const userRequests = require('./requests/users')
 
 function processRegisterForm(e) {
@@ -145,7 +190,7 @@ module.exports = {
   setupRegisterForm,
 }
 
-},{"./requests/users":7}],6:[function(require,module,exports){
+},{"./requests/users":8}],7:[function(require,module,exports){
 const { baseURL } = require('../constants')
 const axios = require('axios')
 
@@ -167,22 +212,22 @@ module.exports = {
     }
     
 }
-},{"../constants":2,"axios":14}],7:[function(require,module,exports){
+},{"../constants":3,"axios":17}],8:[function(require,module,exports){
 const { baseURL } = require('../constants')
 const axios = require('axios')
 
 module.exports = {
-    getAll() {
-        return axios.get(`${baseURL}/api/users`)
+    getAll(token) {
+        return axios.get(`${baseURL}/api/users`, { headers: { "Authorization": `Bearer ${token}` } })
     },
     find(id) {
         return axios.get(`${baseURL}/api/users/${id}`)
     },
-    edit(id, body) {
-        return axios.patch(`${baseURL}/api/users/${id}`, body)
+    edit(id, body, token) {
+        return axios.patch(`${baseURL}/api/users/${id}`, body, { headers: { "Authorization": `Bearer ${token}` } })
     },
-    delete(id) {
-        return axios.delete(`${baseURL}/api/users/${id}`)
+    delete(id, token) {
+        return axios.delete(`${baseURL}/api/users/${id}`, { headers: { "Authorization": `Bearer ${token}` } })
     },
     register(body) {
         return axios.post(`${baseURL}/auth/register`, body)
@@ -192,7 +237,47 @@ module.exports = {
     }
     
 }
-},{"../constants":2,"axios":14}],8:[function(require,module,exports){
+},{"../constants":3,"axios":17}],9:[function(require,module,exports){
+function adminNavbarTemplate() {
+  return `
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-grey scrolling-navbar">
+        <a class="navbar-brand" href="#"><strong>Galvanize Snacks</strong></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">All Snacks</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">My Reviews</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Add Snack</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">All Users<span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+            <ul class="navbar-nav nav-flex-icons">
+                <li class="nav-item">
+                    <a class="nav-link loginLink">Log Out</i></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    `
+}
+
+module.exports = {
+  adminNavbarTemplate,
+}
+
+},{}],10:[function(require,module,exports){
 function allSnacksTemplate(snacks) {
   const snackDivContent = snacks.map(snack => `<div class='row allSnackRow'> <div class='row'>
         <div class='col-8'>
@@ -220,7 +305,42 @@ module.exports = {
   allSnacksTemplate,
 }
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+function allUsersTemplate(users) {
+  const userDivContent = users.map(user => `<div class='row allSnackRow'>
+        <div class='row userRow'>
+          <div class='col-4'>
+            <img src='images/user.png' alt='picture of user' class='userListImg'>
+          </div>
+          <div class='col-8'>
+            <p>${user.first_name} ${user.last_name}</p>
+            <p>${user.email}</p>
+            <p>Average User Rating: <strong>5</strong></p>
+            <p>Admin: ${user.admin}</p>
+            <a href='/#/users/${user.id}/reviews'><p>User's Reviews Link</p></a>
+            <ul>
+              ${user.admin ? '' : `<li><button class='delete-user' id='delete-user${user.id}'>Delete</button></li>`}
+              ${user.admin ? '' : `<li><button class='admin-user' id='admin-user-${user.id}'>Make Admin</button></li>`}
+            </ul>
+          </div>
+        </div>
+      </div>`)
+
+  return `<div class='container-fluid mainBody'>
+    <div class='row allSnackRow'>
+      <div class='col-12'>
+        <h1>All Users</h1>
+      </div>
+    </div>
+
+    ${userDivContent}`
+}
+
+module.exports = {
+  allUsersTemplate,
+}
+
+},{}],12:[function(require,module,exports){
 
 function loginFormTemplate() {
   return `
@@ -249,7 +369,7 @@ module.exports = {
   loginFormTemplate,
 }
 
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 function navbarTemplate(loggedIn) {
     let logLink
     if(loggedIn) {
@@ -295,7 +415,7 @@ module.exports = {
   navbarTemplate,
 }
 
-},{}],11:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 function registerTemplate() {
   return `
@@ -327,7 +447,7 @@ module.exports = {
   registerTemplate,
 }
 
-},{}],12:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 
 function viewOneSnackTemplate(snack) {
   return `<div class='infoBox title'>
@@ -371,7 +491,7 @@ module.exports = {
   viewOneSnackTemplate,
 }
 
-},{}],13:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 const snackRequests = require('./requests/snacks')
 
 function getSnack(id) {
@@ -383,9 +503,9 @@ module.exports = {
   getSnack,
 }
 
-},{"./requests/snacks":6}],14:[function(require,module,exports){
+},{"./requests/snacks":7}],17:[function(require,module,exports){
 module.exports = require('./lib/axios');
-},{"./lib/axios":16}],15:[function(require,module,exports){
+},{"./lib/axios":19}],18:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -569,7 +689,7 @@ module.exports = function xhrAdapter(config) {
 };
 
 }).call(this,require('_process'))
-},{"../core/createError":22,"./../core/settle":25,"./../helpers/btoa":29,"./../helpers/buildURL":30,"./../helpers/cookies":32,"./../helpers/isURLSameOrigin":34,"./../helpers/parseHeaders":36,"./../utils":38,"_process":40}],16:[function(require,module,exports){
+},{"../core/createError":25,"./../core/settle":28,"./../helpers/btoa":32,"./../helpers/buildURL":33,"./../helpers/cookies":35,"./../helpers/isURLSameOrigin":37,"./../helpers/parseHeaders":39,"./../utils":41,"_process":43}],19:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -623,7 +743,7 @@ module.exports = axios;
 // Allow use of default import syntax in TypeScript
 module.exports.default = axios;
 
-},{"./cancel/Cancel":17,"./cancel/CancelToken":18,"./cancel/isCancel":19,"./core/Axios":20,"./defaults":27,"./helpers/bind":28,"./helpers/spread":37,"./utils":38}],17:[function(require,module,exports){
+},{"./cancel/Cancel":20,"./cancel/CancelToken":21,"./cancel/isCancel":22,"./core/Axios":23,"./defaults":30,"./helpers/bind":31,"./helpers/spread":40,"./utils":41}],20:[function(require,module,exports){
 'use strict';
 
 /**
@@ -644,7 +764,7 @@ Cancel.prototype.__CANCEL__ = true;
 
 module.exports = Cancel;
 
-},{}],18:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 var Cancel = require('./Cancel');
@@ -703,14 +823,14 @@ CancelToken.source = function source() {
 
 module.exports = CancelToken;
 
-},{"./Cancel":17}],19:[function(require,module,exports){
+},{"./Cancel":20}],22:[function(require,module,exports){
 'use strict';
 
 module.exports = function isCancel(value) {
   return !!(value && value.__CANCEL__);
 };
 
-},{}],20:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 var defaults = require('./../defaults');
@@ -791,7 +911,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = Axios;
 
-},{"./../defaults":27,"./../utils":38,"./InterceptorManager":21,"./dispatchRequest":23}],21:[function(require,module,exports){
+},{"./../defaults":30,"./../utils":41,"./InterceptorManager":24,"./dispatchRequest":26}],24:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -845,7 +965,7 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 module.exports = InterceptorManager;
 
-},{"./../utils":38}],22:[function(require,module,exports){
+},{"./../utils":41}],25:[function(require,module,exports){
 'use strict';
 
 var enhanceError = require('./enhanceError');
@@ -865,7 +985,7 @@ module.exports = function createError(message, config, code, request, response) 
   return enhanceError(error, config, code, request, response);
 };
 
-},{"./enhanceError":24}],23:[function(require,module,exports){
+},{"./enhanceError":27}],26:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -953,7 +1073,7 @@ module.exports = function dispatchRequest(config) {
   });
 };
 
-},{"../cancel/isCancel":19,"../defaults":27,"./../helpers/combineURLs":31,"./../helpers/isAbsoluteURL":33,"./../utils":38,"./transformData":26}],24:[function(require,module,exports){
+},{"../cancel/isCancel":22,"../defaults":30,"./../helpers/combineURLs":34,"./../helpers/isAbsoluteURL":36,"./../utils":41,"./transformData":29}],27:[function(require,module,exports){
 'use strict';
 
 /**
@@ -976,7 +1096,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
   return error;
 };
 
-},{}],25:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 var createError = require('./createError');
@@ -1004,7 +1124,7 @@ module.exports = function settle(resolve, reject, response) {
   }
 };
 
-},{"./createError":22}],26:[function(require,module,exports){
+},{"./createError":25}],29:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1026,7 +1146,7 @@ module.exports = function transformData(data, headers, fns) {
   return data;
 };
 
-},{"./../utils":38}],27:[function(require,module,exports){
+},{"./../utils":41}],30:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -1122,7 +1242,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 }).call(this,require('_process'))
-},{"./adapters/http":15,"./adapters/xhr":15,"./helpers/normalizeHeaderName":35,"./utils":38,"_process":40}],28:[function(require,module,exports){
+},{"./adapters/http":18,"./adapters/xhr":18,"./helpers/normalizeHeaderName":38,"./utils":41,"_process":43}],31:[function(require,module,exports){
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -1135,7 +1255,7 @@ module.exports = function bind(fn, thisArg) {
   };
 };
 
-},{}],29:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 // btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
@@ -1173,7 +1293,7 @@ function btoa(input) {
 
 module.exports = btoa;
 
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1243,7 +1363,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
   return url;
 };
 
-},{"./../utils":38}],31:[function(require,module,exports){
+},{"./../utils":41}],34:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1259,7 +1379,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
     : baseURL;
 };
 
-},{}],32:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1314,7 +1434,7 @@ module.exports = (
   })()
 );
 
-},{"./../utils":38}],33:[function(require,module,exports){
+},{"./../utils":41}],36:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1330,7 +1450,7 @@ module.exports = function isAbsoluteURL(url) {
   return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
 };
 
-},{}],34:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1400,7 +1520,7 @@ module.exports = (
   })()
 );
 
-},{"./../utils":38}],35:[function(require,module,exports){
+},{"./../utils":41}],38:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -1414,7 +1534,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
   });
 };
 
-},{"../utils":38}],36:[function(require,module,exports){
+},{"../utils":41}],39:[function(require,module,exports){
 'use strict';
 
 var utils = require('./../utils');
@@ -1469,7 +1589,7 @@ module.exports = function parseHeaders(headers) {
   return parsed;
 };
 
-},{"./../utils":38}],37:[function(require,module,exports){
+},{"./../utils":41}],40:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1498,7 +1618,7 @@ module.exports = function spread(callback) {
   };
 };
 
-},{}],38:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 'use strict';
 
 var bind = require('./helpers/bind');
@@ -1803,7 +1923,7 @@ module.exports = {
   trim: trim
 };
 
-},{"./helpers/bind":28,"is-buffer":39}],39:[function(require,module,exports){
+},{"./helpers/bind":31,"is-buffer":42}],42:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -1826,7 +1946,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],40:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -2012,4 +2132,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[4]);
+},{}]},{},[5]);

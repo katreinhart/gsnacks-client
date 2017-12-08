@@ -11,6 +11,11 @@ const { setupSnacks } = require('./allSnacks')
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
 const { getSnack } = require('./viewOne')
 
+const { getAll: getUsers } = require('./requests/users')
+const { adminNavbarTemplate } = require('./templates/adminNavbar')
+const { allUsersTemplate } = require('./templates/allUsers')
+const { setupAdminUsers } = require('./admin')
+
 const mainContentDiv = document.getElementById('main-content')
 const navContentDiv = document.getElementById('nav-content')
 
@@ -39,7 +44,6 @@ function setupHome() {
     })
   } else if (window.location.href.includes('#/snacks')) {
     navContentDiv.innerHTML = navbarTemplate(true)
-    console.log('display one snack')
     const snackId = window.location.href.split('/')[5]
     getSnack(snackId).then((snack) => {
       mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
@@ -47,6 +51,14 @@ function setupHome() {
   } else if (window.location.href.includes('#/logout')) {
     window.localStorage.removeItem('token')
     window.location.href = '#/login'
+  } else if (window.location.href.includes('#/admin')) {
+    // verify actual admin status
+    navContentDiv.innerHTML = adminNavbarTemplate()
+    getUsers(token).then((result) => {
+      const { users } = result.data
+      mainContentDiv.innerHTML = allUsersTemplate(users)
+      setupAdminUsers()
+    })
   } else {
     navContentDiv.innerHTML = navbarTemplate(true)
     setupSnacks().then((snacks) => {
