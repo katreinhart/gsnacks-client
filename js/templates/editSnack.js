@@ -19,15 +19,6 @@ function editOneSnackTemplate(snack) {
           <p class='strongP'>Name: </p><input class='formInput' type='text' placeholder='Name'>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Rating: </p><select name="snack">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </div>
-        <div class='inputLine'>
           <p class='strongP'>Price: </p><input class='formInput' type='text' placeholder='Price'>
         </div>
         <div class='inputLine'>
