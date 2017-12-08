@@ -44,7 +44,7 @@ module.exports = {
 }
 
 },{"./requests/snacks":7}],3:[function(require,module,exports){
-const baseURL = 'http://localhost:3000'
+const baseURL = 'https://snack-team-deploy.herokuapp.com'
 
 module.exports = {
   baseURL,
@@ -58,17 +58,18 @@ function processLoginForm(e) {
   const email = e.srcElement[0].value
   const password = e.srcElement[1].value
   const rememberMe = e.srcElement[2].checked
-  userRequests.login({ email, password })
+  return userRequests.login({ email, password })
     .then((result) => {
       if (rememberMe) {
         window.localStorage.setItem('token', result.data.token)
       }
+      window.isLoggedIn = true
       window.location.href = '#/snacks'
     })
     .catch((err) => {
       console.error(err)
     })
-  return false
+  
 }
 
 function setUpLoginForm() {
@@ -108,62 +109,85 @@ const { setupAdminUsers } = require('./admin')
 const mainContentDiv = document.getElementById('main-content')
 const navContentDiv = document.getElementById('nav-content')
 
-let isAdmin = false, isLoggedIn = false
+window.isAdmin = false
+window.isLoggedIn = false
 
 function redirectTo(str) {
   if (str.includes('#')) window.location.hash = str
   window.location.reload()
-  loadHome()
 }
 
 function setupAdmin() {
   const token = window.localStorage.getItem('token')
   navContentDiv.innerHTML = adminNavbarTemplate()
   getUsers(token).then((result) => {
+    window.location.hash = ('/users')
     const { users } = result.data
     mainContentDiv.innerHTML = allUsersTemplate(users)
     setupAdminUsers()
   })
 }
 
+function setupLogin() {
+  navContentDiv.innerHTML = navbarTemplate(window.isLoggedIn)
+  mainContentDiv.innerHTML = loginFormTemplate()
+  setUpLoginForm()
+}
+
+function setupRegister() {
+  navContentDiv.innerHTML = navbarTemplate(window.isLoggedIn)
+  mainContentDiv.innerHTML = registerTemplate()
+  setupRegisterForm()
+}
+
+function showSnacks(){
+  navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
+  window.location.href = '#/snacks'
+  setupSnacks().then((snacks) => {
+    mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+  })
+}
+
+function showOneSnack() {
+  navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
+  const snackId = window.location.href.split('/')[5]
+  getSnack(snackId).then((snack) => {
+    mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+  })
+}
+
+function logOut() {
+  window.localStorage.removeItem('token')
+  isLoggedIn = false
+  window.isAdmin = false
+  redirectTo('#/login')
+}
+
 function setupLoggedOutView() {
   if (window.location.href.includes('#/login')) {
-    navContentDiv.innerHTML = navbarTemplate(isLoggedIn)
-    mainContentDiv.innerHTML = loginFormTemplate()
-    setUpLoginForm()
+    setupLogin()
   } else if (window.location.href.includes('#/register')) {
-    navContentDiv.innerHTML = navbarTemplate(isLoggedIn)
-    mainContentDiv.innerHTML = registerTemplate()
-    setupRegisterForm()
-  } else {
-    navContentDiv.innerHTML = navbarTemplate(isLoggedIn)
-    window.location.href = '/#/snacks'
-    setupSnacks().then((snacks) => {
-      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-    })
-  }
+    setupRegister()
+  } if (window.location.href.endsWith('#/snacks')) {
+    showSnacks()
+  } else if (window.location.href.includes('#/snacks')) {
+    showOneSnack()
+  } 
 }
 
 function loadHome() {
   if (window.location.href.endsWith('#/snacks')) {
-    navContentDiv.innerHTML = isAdmin? adminNavbarTemplate() : navbarTemplate(true)
-    setupSnacks().then((snacks) => {
-      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-    })
+    showSnacks()
   } else if (window.location.href.includes('#/snacks')) {
-    navContentDiv.innerHTML = isAdmin? adminNavbarTemplate() : navbarTemplate(true)
-    const snackId = window.location.href.split('/')[5]
-    getSnack(snackId).then((snack) => {
-      mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
-    })
+    showOneSnack()
   } else if (window.location.href.includes('#/logout')) {
-    window.localStorage.removeItem('token')
-    redirectTo('#/login')
+    logOut()
+  } else if (window.location.href.includes('#/login')) {
+    setupLogin()
+  } else if(window.location.href.includes('#/register')) {
+    setupRegister()
   } else { // fallback route
-    navContentDiv.innerHTML = isAdmin? adminNavbarTemplate() : navbarTemplate(true)
-    setupSnacks().then((snacks) => {
-      mainContentDiv.innerHTML = allSnacksTemplate(snacks)
-    })
+    showSnacks()
   }
 }
 
@@ -173,8 +197,8 @@ function setupHome() {
     getMyInfo(token).then(result => {
       const user = result.data
       isLoggedIn = true
-      isAdmin = user.admin
-      if(isAdmin) {
+      window.isAdmin = user.admin
+      if(window.isAdmin) {
         setupAdmin()
       } else {
         loadHome()

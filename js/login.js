@@ -5,17 +5,18 @@ function processLoginForm(e) {
   const email = e.srcElement[0].value
   const password = e.srcElement[1].value
   const rememberMe = e.srcElement[2].checked
-  userRequests.login({ email, password })
+  return userRequests.login({ email, password })
     .then((result) => {
       if (rememberMe) {
         window.localStorage.setItem('token', result.data.token)
       }
+      window.isLoggedIn = true
       window.location.href = '#/snacks'
     })
     .catch((err) => {
       console.error(err)
     })
-  return false
+  
 }
 
 function setUpLoginForm() {
