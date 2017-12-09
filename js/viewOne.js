@@ -1,10 +1,12 @@
 const snackRequests = require('./requests/snacks')
 const reviewsRequests = require('./requests/reviews')
 
-const { addEditSnackTemplate } = require('./templates/addEditSnack')
 const { editOneSnackTemplate } = require('./templates/editSnack')
 
-const { update: editSnackRequest } = require('./requests/snacks')
+const { 
+  update: editSnackRequest,
+  create: createNewSnackRequest,
+} = require('./requests/snacks')
 
 const mainContentDiv = document.getElementById('main-content')
 
@@ -23,6 +25,15 @@ function getSnack(id) {
   })
 }
 
+function getUpdatedInfo() {
+  const name = document.getElementById('snack_name').value
+  const img = document.getElementById('snack_img').value
+  const price = document.getElementById('snack_price').value
+  const description = document.getElementById('snack_description').value
+  const isPerishable = document.getElementById('snack_is_perish').value
+  return { name, img, price, description, is_perishable: isPerishable }
+}
+
 function setupSnackButtons() {
   const snackId = window.location.hash.split('/')[2]
   if (window.isAdmin) {
@@ -32,12 +43,7 @@ function setupSnackButtons() {
         const token = window.localStorage.getItem('token')
         document.getElementById(`edit-snack-${snackId}`).addEventListener('submit', (e) => {
           e.preventDefault()
-          const name = document.getElementById('snack_name').value
-          const img = document.getElementById('snack_img').value
-          const price = document.getElementById('snack_price').value
-          const description = document.getElementById('snack_description').value
-          const isPerishable = document.getElementById('snack_is_perish').value
-          const updatedSnack = { name, img, price, description, is_perishable: isPerishable }
+          const updatedSnack = getUpdatedInfo()
           editSnackRequest(snackId, updatedSnack, token).then((result) => {
             window.location.reload()
           }).catch(console.error)
@@ -46,15 +52,29 @@ function setupSnackButtons() {
     })
     document.getElementById(`delete-${snackId}`).addEventListener('click', (e) => {
       console.log('delete snack')
-
+      // todo 
     })
   }
   document.getElementById(`review-${snackId}`).addEventListener('click', (e) => {
     console.log('review this snack')
+    // todo
+  })
+}
+
+function setupEditSnackTemplateButtons() {
+  document.getElementById('add-snack').addEventListener('submit', (e) => {
+    e.preventDefault()
+    const newSnack = getUpdatedInfo()
+    const token = window.localStorage.getItem('token')
+    createNewSnackRequest(newSnack, token).then((result) => {
+      const newSnackId = result.data.snack[0].id
+      window.location.href = `#/snacks/${newSnackId}`
+    }).catch(console.error)
   })
 }
 
 module.exports = {
   getSnack,
   setupSnackButtons,
+  setupEditSnackTemplateButtons,
 }

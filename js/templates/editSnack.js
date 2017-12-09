@@ -1,13 +1,20 @@
 function editOneSnackTemplate(snack) {
+  if (!snack) snack = {
+    id: null,
+    name: '',
+    img: '', 
+    description: '',
+    isPerishable: false
+  }
   return `
   <div class='container-fluid infoBox'>
     <div class='title'>
       <div class='inputLine'>
-        <p class='strongP'>Edit Snack #${snack.id}</p>
+        <p class='strongP'>${snack.id ? 'Edit Snack ${snack.id}' : 'Add Snack'}</p>
       </div>
     </div>
     <div class='textInputs'>
-      <form id='edit-snack-${snack.id}'>
+      <form id=${snack.id ? 'edit-snack-${snack.id}' : 'add-snack'}>
         
         <div class='inputLine'>
           <p class='strongP'>Name: </p><input class='formInput' id='snack_name' type='text' placeholder='Name' value='${snack.name}'>

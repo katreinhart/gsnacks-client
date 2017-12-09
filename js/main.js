@@ -9,7 +9,8 @@ const { allSnacksTemplate } = require('./templates/allSnacks')
 const { setupSnacks } = require('./allSnacks')
 
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
-const { getSnack, setupSnackButtons } = require('./viewOne')
+const { editOneSnackTemplate } = require('./templates/editSnack')
+const { getSnack, setupSnackButtons, setupEditSnackTemplateButtons } = require('./viewOne')
 
 const {
   getAll: getUsers,
@@ -67,10 +68,16 @@ function showSnacks(){
 function showOneSnack() {
   navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
   const snackId = window.location.href.split('/')[5]
-  getSnack(snackId).then((snack) => {
-    mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
-    setupSnackButtons() 
-  })
+  if(snackId === 'new') {
+    console.log('add a new snack')
+    mainContentDiv.innerHTML = editOneSnackTemplate()
+    setupEditSnackTemplateButtons()
+  } else {
+    getSnack(snackId).then((snack) => {
+      mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+      setupSnackButtons() 
+    })
+  }
 }
 
 function showOneUser() {
