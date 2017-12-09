@@ -1,7 +1,7 @@
 function viewOneSnackTemplate(snack) {
   const adminButtons = window.isAdmin ? `
-    <button class='btn btn-sm btn-warning' id='edit-${snack.id}'>Edit</button>
-    <button class='btn btn-sm btn-danger' id='delete-${snack.id}'>Delete</button>
+    <button class='btn btn-sm btn-warning' id='edit-${snack.id}'>Edit Snack</button>
+    <button class='btn btn-sm btn-danger' id='delete-${snack.id}'>Delete Snack</button>
   ` : ``
   return `<div class='container-fluid infoBox'>
       <div class='title'>
@@ -26,8 +26,9 @@ function viewOneSnackTemplate(snack) {
         <div class='inputLine'>
           <p>Description: <span class='strongP'>${snack.description}</span></p>
         </div>
+        
       </div>
-      ${adminButtons}
+      <button class='btn btn-info btn-sm' id='review-${snack.id}'>Review ${snack.name}</button> ${adminButtons}
     </div>`
 }
 

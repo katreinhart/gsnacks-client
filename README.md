@@ -7,6 +7,7 @@ To do:
 1. Add form for reviewing snack
 1. Create page for displaying reviews
 1. Hook up links for edit/delete review  
+1. hook up user profile page  
 
 
 Done:  

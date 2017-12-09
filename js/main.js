@@ -9,12 +9,15 @@ const { allSnacksTemplate } = require('./templates/allSnacks')
 const { setupSnacks } = require('./allSnacks')
 
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
-const { getSnack } = require('./viewOne')
+const { editOneSnackTemplate } = require('./templates/editSnack')
+const { getSnack, setupSnackButtons, setupEditSnackTemplateButtons } = require('./viewOne')
 
 const {
   getAll: getUsers,
   getUser: getMyInfo,
 } = require('./requests/users')
+
+const { getAllForUser: getUserReviews } = require('./requests/reviews')
 
 const { adminNavbarTemplate } = require('./templates/adminNavbar')
 const { allUsersTemplate } = require('./templates/allUsers')
@@ -65,8 +68,25 @@ function showSnacks(){
 function showOneSnack() {
   navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
   const snackId = window.location.href.split('/')[5]
-  getSnack(snackId).then((snack) => {
-    mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+  if(snackId === 'new') {
+    console.log('add a new snack')
+    mainContentDiv.innerHTML = editOneSnackTemplate()
+    setupEditSnackTemplateButtons()
+  } else {
+    getSnack(snackId).then((snack) => {
+      mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+      setupSnackButtons() 
+    })
+  }
+}
+
+function showOneUser() {
+  navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
+  const userId = window.location.href.split('/')[5]
+  getUserReviews(userId).then((result) => {
+    const { reviews } = result.data
+    console.log(reviews)
+    // mainContentDiv.innerHTML = viewUsersReviewsTemplate(reviews)
   })
 }
 
@@ -100,10 +120,12 @@ function loadHome() {
     logOut()
   } else if (window.location.href.includes('#/login')) {
     setupLogin()
-  } else if(window.location.href.includes('#/register')) {
+  } else if (window.location.href.includes('#/register')) {
     setupRegister()
-  } else if(window.location.href.includes('#/admin')) {
+  } else if (window.location.href.includes('#/admin')) {
     setupAdmin()
+  } else if (window.location.href.includes('#/users')) {
+    showOneUser()
   } else { 
     showSnacks()
   }
@@ -117,9 +139,7 @@ function setupHome() {
       isLoggedIn = true
       window.isAdmin = user.admin
       if(window.isAdmin) {
-        console.log('ur admin')
         setupAdmin()
-        console.log('ur still admin')
       } else {
         loadHome()
       }
