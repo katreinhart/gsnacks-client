@@ -6,6 +6,9 @@ const { editOneSnackTemplate } = require('./templates/editSnack')
 const { addEditSnackReviewTemplate } = require('./templates/reviewSnack')
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
 
+
+const { averageSnackReview } = require('./averageReview')
+
 const {
   update: editSnackRequest,
   create: createNewSnackRequest,
@@ -20,12 +23,11 @@ function getSnack(id) {
 
   return Promise.all([snackReviewPromise, snackPromise]).then((result) => {
     const [{ data: snackReviews }, { data: { snacks } }] = result
-    let average = snackReviews.reviews
-      .reduce((acc, item) => acc + parseInt(item.rating, 10), 0) / snackReviews.length
-    if (snackReviews.reviews.length < 1) average = 'N/A'
-    snacks.reviews = snackReviews.reviews
-    snacks.averageRating = average
-    return snacks
+    return averageSnackReview(id).then((average) => {
+      snacks.reviews = snackReviews.reviews
+      snacks.averageRating = parseFloat(average.avg)
+      return snacks
+    })
   })
 }
 
