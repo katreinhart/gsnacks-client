@@ -15,7 +15,7 @@ module.exports = {
         return axios.patch(`${baseURL}/api/users/${id}`, body, { headers: { "Authorization": `Bearer ${token}` } })
     },
     delete(id, token) {
-        return axios.delete(`${baseURL}/api/users/${id}`, { headers: { "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsiaWQiOjN9LCJpYXQiOjE1MTI3NzAyODIsImV4cCI6MTUxMzk3OTg4Mn0.-A0g5UUM-izDXUDxy73mCNU7K51rkpCczJdXdlnAZFo` } })
+        return axios.delete(`${baseURL}/api/users/${id}`, { headers: { "Authorization": `Bearer ${token}` } })
     },
     register(body) {
         return axios.post(`${baseURL}/auth/register`, body)

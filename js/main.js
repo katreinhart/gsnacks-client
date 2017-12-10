@@ -92,7 +92,7 @@ function showOneUser() {
 
 function logOut() {
   window.localStorage.clear()
-  isLoggedIn = false
+  window.isLoggedIn = false
   window.isAdmin = false
   redirectTo('#/login')
 }
