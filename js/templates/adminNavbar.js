@@ -19,8 +19,8 @@ function adminNavbarTemplate() {
                 <li class="nav-item">
                     <a class="nav-link" href="#/snacks/new">Add Snack</a>
                 </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="#/admin">All Users<span class="sr-only">(current)</span></a>
+                <li class="nav-item">
+                    <a class="nav-link" href="#/admin">All Users</a>
                 </li>
             </ul>
             <ul class="navbar-nav nav-flex-icons">

@@ -29,9 +29,12 @@ const navContentDiv = document.getElementById('nav-content')
 window.isAdmin = false
 window.isLoggedIn = false
 
+function toTop() {
+    window.scrollTo(0, 0)
+}
+
 function redirectTo(str) {
   if (str.includes('#')) window.location.hash = str
-  window.location.reload()
 }
 
 function setupAdmin() {
@@ -62,12 +65,14 @@ function showSnacks() {
   window.location.href = '#/snacks'
   setupSnacks().then((snacks) => {
     mainContentDiv.innerHTML = allSnacksTemplate(snacks)
+    toTop()
   })
 }
 
 function showOneSnack() {
   navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
   const snackId = window.location.href.split('/')[5]
+<<<<<<< HEAD
   if(snackId === 'new') {
     console.log('add a new snack')
     mainContentDiv.innerHTML = editOneSnackTemplate()
@@ -78,6 +83,13 @@ function showOneSnack() {
       setupSnackButtons() 
     })
   }
+=======
+  getSnack(snackId).then((snack) => {
+    mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+    setupSnackButtons() 
+    toTop()
+  })
+>>>>>>> e699245149de6072504c6146965d61a8e2c66bb3
 }
 
 function showOneUser() {
@@ -87,6 +99,7 @@ function showOneUser() {
     const { reviews } = result.data
     console.log(reviews)
     // mainContentDiv.innerHTML = viewUsersReviewsTemplate(reviews)
+    toTop()
   })
 }
 
@@ -129,6 +142,7 @@ function loadHome() {
   } else { 
     showSnacks()
   }
+  toTop()
 }
 
 function setupHome() {
