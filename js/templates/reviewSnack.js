@@ -1,24 +1,33 @@
-function editOneSnackTemplate(snack) {
+function addEditSnackReviewTemplate(snack, review) {
+  if (!review) {
+    review = {
+      title: '',
+      text: '',
+      rating: 3,
+      snack_id: snack.id,
+    }
+  }
   return `
   <div class='container-fluid infoBox'>
     <div class='title'>
       <div class='inputLine'>
-        <p class='strongP'>Review a Snack</p>
+        <p class='strongP'>Review ${snack.name}</p>
       </div>
     </div>
     <div class='snackImg'>
-      <p>Replace with img of snack</p>
+      <img src='${snack.img}' width=300 alt='a picture of ${snack.name}>
     </div>
     <div class='textInputs'>
       <form>
         <div class='inputLine'>
-          <p class='strongP'>ID Number: </p><span>5</span>
+          <p class='strongP'>ID Number: </p><span>${snack.id}</span>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Name: </p><span>Snack Name</span>
+          <p class='strongP'>Name: </p><span>${snack.name}</span>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Rating: </p><select name="snack">
+          <p class='strongP'>Rating: </p>
+          <select name="snack" value=${review.rating}>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -27,10 +36,13 @@ function editOneSnackTemplate(snack) {
           </select>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Price: </p><span>$4.99</span>
+          <p class='strongP'>Price: </p><span>${snack.price}</span>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Review: </p><input class='formInput' type='text' placeholder='Tastes great!'>
+          <p class='strongP'>Review Title: </p><input class='formInput' type='text' placeholder='Awesome snack!' value='${review.title}'>
+        </div>
+        <div class='inputLine'>
+          <p class='strongP'>Review: </p><input class='formInput' type='text' placeholder='Tastes great!' value='${review.text}'>
         </div>
         <input type='submit' value='Submit Review!'>
       </form>
@@ -39,5 +51,5 @@ function editOneSnackTemplate(snack) {
 }
 
 module.exports = {
-  editOneSnackTemplate,
+  addEditSnackReviewTemplate,
 }

@@ -2,6 +2,8 @@ const snackRequests = require('./requests/snacks')
 const reviewsRequests = require('./requests/reviews')
 
 const { editOneSnackTemplate } = require('./templates/editSnack')
+// const { addEditSnackReviewTemplate } = require('./templates/reviewSnack')
+const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
 
 const { 
   update: editSnackRequest,
@@ -31,13 +33,20 @@ function getUpdatedInfo() {
   const price = document.getElementById('snack_price').value
   const description = document.getElementById('snack_description').value
   const isPerishable = document.getElementById('snack_is_perish').value
-  return { name, img, price, description, is_perishable: isPerishable }
+  return {
+    name,
+    img,
+    price,
+    description,
+    is_perishable: isPerishable,
+  }
 }
 
 function setupSnackButtons() {
   const snackId = window.location.hash.split('/')[2]
   if (window.isAdmin) {
     document.getElementById(`edit-${snackId}`).addEventListener('click', (e) => {
+      e.preventDefault()
       getSnack(snackId).then((snack) => {
         mainContentDiv.innerHTML += editOneSnackTemplate(snack)
         const token = window.localStorage.getItem('token')
@@ -45,7 +54,7 @@ function setupSnackButtons() {
           e.preventDefault()
           const updatedSnack = getUpdatedInfo()
           editSnackRequest(snackId, updatedSnack, token).then((result) => {
-            window.location.reload()
+            mainContentDiv.innerHTML = viewOneSnackTemplate(updatedSnack)
           }).catch(console.error)
         })
       })

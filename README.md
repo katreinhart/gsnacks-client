@@ -9,6 +9,7 @@ To do:
 1. Hook up links for edit/delete review  
 1. hook up user profile page  
 1. Edit snack button triggers add event listener of null bug  
+1. Get user name from user ID for display on review page
 
 
 Done:  

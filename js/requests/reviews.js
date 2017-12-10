@@ -8,25 +8,23 @@ module.exports = {
     getAllForSnack(id) {
         return axios.get(`${baseURL}/api/snacks/${id}/reviews`)
     },
-
-    getAverageSnackReview(id){
+    getAverageSnackReview(id) {
         return axios.get(`${baseURL}/api/reviews/avg/${id}`)
     },
     getAllForUser(id, token) {
         return axios.get(`${baseURL}/api/users/${id}/reviews`, { headers: { "Authorization": `Bearer ${token}` } })
-
     },
     find(id) {
         return axios.get(`${baseURL}/api/reviews/${id}`)
     },
-    create(body) {
-        return axios.post(`${baseURL}/api/reviews`, body)
+    create(body, token) {
+        return axios.post(`${baseURL}/api/reviews`, body, { headers: { "Authorization": `Bearer ${token}` } })
     },
-    update(id, body) {
-        return axios.put(`${baseURL}/api/reviews/${id}`, body)
+    update(id, body, token) {
+        return axios.put(`${baseURL}/api/reviews/${id}`, body, { headers: { "Authorization": `Bearer ${token}` } })
     },
-    delete(id) {
-        return axios.delete(`${baseURL}/api/reviews/${id}`)
+    delete(id, token) {
+        return axios.delete(`${baseURL}/api/reviews/${id}`, { headers: { "Authorization": `Bearer ${token}` } })
     }
 }
 
