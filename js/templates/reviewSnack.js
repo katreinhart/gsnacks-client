@@ -18,7 +18,7 @@ function addEditSnackReviewTemplate(snack, review) {
       <img src='${snack.img}' width=300 alt='a picture of ${snack.name}>
     </div>
     <div class='textInputs'>
-      <form>
+      <form id='review-snack'>
         <div class='inputLine'>
           <p class='strongP'>ID Number: </p><span>${snack.id}</span>
         </div>
@@ -27,7 +27,7 @@ function addEditSnackReviewTemplate(snack, review) {
         </div>
         <div class='inputLine'>
           <p class='strongP'>Rating: </p>
-          <select name="snack" value=${review.rating}>
+          <select name="review-rating" value=${review.rating} id='review-rating'>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -39,10 +39,10 @@ function addEditSnackReviewTemplate(snack, review) {
           <p class='strongP'>Price: </p><span>${snack.price}</span>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Review Title: </p><input class='formInput' type='text' placeholder='Awesome snack!' value='${review.title}'>
+          <p class='strongP'>Review Title: </p><input class='formInput' id='review-title' type='text' placeholder='Awesome snack!' value='${review.title}'>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Review: </p><input class='formInput' type='text' placeholder='Tastes great!' value='${review.text}'>
+          <p class='strongP'>Review: </p><input class='formInput' id='review-text' type='text' placeholder='Tastes great!' value='${review.text}'>
         </div>
         <input type='submit' value='Submit Review!'>
       </form>

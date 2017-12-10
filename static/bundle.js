@@ -656,7 +656,7 @@ function addEditSnackReviewTemplate(snack, review) {
       <img src='${snack.img}' width=300 alt='a picture of ${snack.name}>
     </div>
     <div class='textInputs'>
-      <form>
+      <form id='review-snack'>
         <div class='inputLine'>
           <p class='strongP'>ID Number: </p><span>${snack.id}</span>
         </div>
@@ -665,7 +665,7 @@ function addEditSnackReviewTemplate(snack, review) {
         </div>
         <div class='inputLine'>
           <p class='strongP'>Rating: </p>
-          <select name="snack" value=${review.rating}>
+          <select name="review-rating" value=${review.rating} id='review-rating'>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -677,10 +677,10 @@ function addEditSnackReviewTemplate(snack, review) {
           <p class='strongP'>Price: </p><span>${snack.price}</span>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Review Title: </p><input class='formInput' type='text' placeholder='Awesome snack!' value='${review.title}'>
+          <p class='strongP'>Review Title: </p><input class='formInput' id='review-title' type='text' placeholder='Awesome snack!' value='${review.title}'>
         </div>
         <div class='inputLine'>
-          <p class='strongP'>Review: </p><input class='formInput' type='text' placeholder='Tastes great!' value='${review.text}'>
+          <p class='strongP'>Review: </p><input class='formInput' id='review-text' type='text' placeholder='Tastes great!' value='${review.text}'>
         </div>
         <input type='submit' value='Submit Review!'>
       </form>
@@ -823,6 +823,16 @@ function handleEditSnack(e) {
   }).catch(console.error)
 }
 
+function getSnackReviewFromForm() {
+  const rating = document.getElementById('review-rating').value
+  const title = document.getElementById('review-title').value
+  const text = document.getElementById('review-text').value
+
+  return {
+    rating, title, text,
+  }
+}
+
 function setupSnackButtons() {
   const snackId = window.location.hash.split('/')[2]
   const token = window.localStorage.getItem('token')
@@ -835,19 +845,36 @@ function setupSnackButtons() {
       })
     })
     document.getElementById(`delete-${snackId}`).addEventListener('click', (e) => {
+      e.preventDefault()
       deleteSnackRequest(snackId, token).then((result) => {
         console.log('snack deleted')
         // display deleted confirm message?
       }).catch(console.error)
     })
-  } 
-  if(window.isLoggedIn) {
+  }
+  if (window.isLoggedIn) {
     document.getElementById(`review-${snackId}`).addEventListener('click', (e) => {
-      userRequests.getUser(token).then((result) => {
-        // grab user ID
-        // check to see if user has reviewed snack
-        // if not, display form for new review
-        // else, display edit review
+      e.preventDefault()
+      const snackPromise = getSnack(snackId)
+      const userPromise = userRequests.getUser(token)
+
+      Promise.all([snackPromise, userPromise]).then((result) => {
+        const [snack, { data: user }] = result
+        mainContentDiv.innerHTML += addEditSnackReviewTemplate(snack)
+        document.getElementById('review-snack').addEventListener('submit', (e) => {
+          e.preventDefault()
+          const snackReview = getSnackReviewFromForm()
+          console.log(snackReview)
+          snackReview.snack_id = snackId
+          snackReview.user_id = user.id
+
+          reviewsRequests.create(snackReview, token).then((response) => {
+            // display success message
+            // display updated snack review 
+            console.log(response)
+            mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+          })
+        })
       })
     })
   }
