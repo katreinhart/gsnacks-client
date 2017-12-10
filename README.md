@@ -5,10 +5,10 @@ To do:
 
 1. Create user profile page
 1. Add form for reviewing snack
-1. Create page for displaying reviews
+1. Create page for displaying reviews  
 1. Hook up links for edit/delete review  
 1. hook up user profile page  
-1. Edit snack button triggers add event listener of null bug
+1. Edit snack button triggers add event listener of null bug  
 
 
 Done:  
