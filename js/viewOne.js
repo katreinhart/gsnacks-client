@@ -1,11 +1,15 @@
 const snackRequests = require('./requests/snacks')
 const reviewsRequests = require('./requests/reviews')
+const userRequests = require('./requests/users')
 
 const { editOneSnackTemplate } = require('./templates/editSnack')
+const { addEditSnackReviewTemplate } = require('./templates/reviewSnack')
+const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
 
-const { 
+const {
   update: editSnackRequest,
   create: createNewSnackRequest,
+  delete: deleteSnackRequest,
 } = require('./requests/snacks')
 
 const mainContentDiv = document.getElementById('main-content')
@@ -31,34 +35,53 @@ function getUpdatedInfo() {
   const price = document.getElementById('snack_price').value
   const description = document.getElementById('snack_description').value
   const isPerishable = document.getElementById('snack_is_perish').value
-  return { name, img, price, description, is_perishable: isPerishable }
+  return {
+    name,
+    img,
+    price,
+    description,
+    is_perishable: isPerishable,
+  }
+}
+
+function handleEditSnack(e) {
+  e.preventDefault()
+  const token = window.localStorage.getItem('token')
+  const snackId = window.location.hash.split('/')[2]
+  const updatedSnack = getUpdatedInfo()
+  editSnackRequest(snackId, updatedSnack, token).then((result) => {
+    mainContentDiv.innerHTML = viewOneSnackTemplate(updatedSnack)
+  }).catch(console.error)
 }
 
 function setupSnackButtons() {
   const snackId = window.location.hash.split('/')[2]
+  const token = window.localStorage.getItem('token')
   if (window.isAdmin) {
     document.getElementById(`edit-${snackId}`).addEventListener('click', (e) => {
+      e.preventDefault()
       getSnack(snackId).then((snack) => {
         mainContentDiv.innerHTML += editOneSnackTemplate(snack)
-        const token = window.localStorage.getItem('token')
-        document.getElementById(`edit-snack-${snackId}`).addEventListener('submit', (e) => {
-          e.preventDefault()
-          const updatedSnack = getUpdatedInfo()
-          editSnackRequest(snackId, updatedSnack, token).then((result) => {
-            window.location.reload()
-          }).catch(console.error)
-        })
+        document.getElementById(`edit-snack-${snackId}`).addEventListener('submit', handleEditSnack)
       })
     })
     document.getElementById(`delete-${snackId}`).addEventListener('click', (e) => {
-      console.log('delete snack')
-      // todo 
+      deleteSnackRequest(snackId, token).then((result) => {
+        console.log('snack deleted')
+        // display deleted confirm message?
+      }).catch(console.error)
+    })
+  } 
+  if(window.isLoggedIn) {
+    document.getElementById(`review-${snackId}`).addEventListener('click', (e) => {
+      userRequests.getUser(token).then((result) => {
+        // grab user ID
+        // check to see if user has reviewed snack
+        // if not, display form for new review
+        // else, display edit review
+      })
     })
   }
-  document.getElementById(`review-${snackId}`).addEventListener('click', (e) => {
-    console.log('review this snack')
-    // todo
-  })
 }
 
 function setupEditSnackTemplateButtons() {

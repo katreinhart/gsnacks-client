@@ -57,7 +57,7 @@ function setupRegister() {
   setupRegisterForm()
 }
 
-function showSnacks(){
+function showSnacks() {
   navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
   window.location.href = '#/snacks'
   setupSnacks().then((snacks) => {
@@ -92,7 +92,7 @@ function showOneUser() {
 
 function logOut() {
   window.localStorage.clear()
-  isLoggedIn = false
+  window.isLoggedIn = false
   window.isAdmin = false
   redirectTo('#/login')
 }
@@ -133,19 +133,19 @@ function loadHome() {
 
 function setupHome() {
   const token = window.localStorage.getItem('token')
-  if(token) {
-    getMyInfo(token).then(result => {
+  if (token) {
+    getMyInfo(token).then((result) => {
       const user = result.data
-      isLoggedIn = true
+      window.isLoggedIn = true
       window.isAdmin = user.admin
-      if(window.isAdmin) {
+      if (window.isAdmin) {
         setupAdmin()
       } else {
         loadHome()
       }
-    }).catch((err => {
+    }).catch((err) => {
       window.localStorage.removeItem('token')
-    }))
+    })
   }
 
   else {

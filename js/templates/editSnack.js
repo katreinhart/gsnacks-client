@@ -6,15 +6,17 @@ function editOneSnackTemplate(snack) {
     description: '',
     isPerishable: false
   }
+  const editText = snack.id ? `Edit Snack ${snack.id}` : 'Add Snack'
+  const formId = snack.id ? `edit-snack-${snack.id}` : 'add-snack'
   return `
   <div class='container-fluid infoBox'>
     <div class='title'>
       <div class='inputLine'>
-        <p class='strongP'>${snack.id ? 'Edit Snack ${snack.id}' : 'Add Snack'}</p>
+        <p class='strongP'>${editText}</p>
       </div>
     </div>
     <div class='textInputs'>
-      <form id=${snack.id ? 'edit-snack-${snack.id}' : 'add-snack'}>
+      <form id=${formId}>
         
         <div class='inputLine'>
           <p class='strongP'>Name: </p><input class='formInput' id='snack_name' type='text' placeholder='Name' value='${snack.name}'>
