@@ -30,7 +30,7 @@ window.isAdmin = false
 window.isLoggedIn = false
 
 function toTop() {
-    window.scrollTo(0, 0)
+  window.scrollTo(0, 0)
 }
 
 function redirectTo(str) {
@@ -72,8 +72,7 @@ function showSnacks() {
 function showOneSnack() {
   navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
   const snackId = window.location.href.split('/')[5]
-<<<<<<< HEAD
-  if(snackId === 'new') {
+  if (snackId === 'new') {
     console.log('add a new snack')
     mainContentDiv.innerHTML = editOneSnackTemplate()
     setupEditSnackTemplateButtons()
@@ -83,13 +82,6 @@ function showOneSnack() {
       setupSnackButtons() 
     })
   }
-=======
-  getSnack(snackId).then((snack) => {
-    mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
-    setupSnackButtons() 
-    toTop()
-  })
->>>>>>> e699245149de6072504c6146965d61a8e2c66bb3
 }
 
 function showOneUser() {
