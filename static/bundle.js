@@ -515,7 +515,7 @@ function editOneSnackTemplate(snack) {
   const editText = snack.id ? `Edit Snack ${snack.id}` : 'Add Snack'
   const formId = snack.id ? `edit-snack-${snack.id}` : 'add-snack'
   return `
-  <div class='container-fluid infoBox'>
+  <div class='container-fluid editBox'>
     <div class='title'>
       <div class='inputLine'>
         <p class='strongP'>${editText}</p>
