@@ -3,16 +3,16 @@
 
 To do:  
 
-1. Create user profile page
-1. Add form for reviewing snack
-1. Create page for displaying reviews  
 1. Hook up links for edit/delete review  
-1. hook up user profile page  
-1. Edit snack button triggers add event listener of null bug  
 1. Get user name from user ID for display on review page
 
 
 Done:  
+~~Edit snack button triggers add event listener of null bug~~  
+~~hook up user profile page~~  
+~~Create page for displaying reviews~~  
+~~Add form for reviewing snack~~  
+~~Create user profile page~~  
 ~~Improve visual/UX design~~  
 ~~Mathy stuff for displaying average review~~  
 ~~Add links for edit/delete review~~  

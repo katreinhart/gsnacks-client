@@ -8,7 +8,7 @@ function loginFormTemplate() {
       </div>
       <form id='loginForm'>
         <div class='inputLine'>
-          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='kat@example.com'>
+          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='admin@example.com'>
         </div>
         <div class='inputLine'>
           <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf1234'>

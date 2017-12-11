@@ -563,7 +563,7 @@ function loginFormTemplate() {
       </div>
       <form id='loginForm'>
         <div class='inputLine'>
-          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='kat@example.com'>
+          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='admin@example.com'>
         </div>
         <div class='inputLine'>
           <p>Password: </p><input class='formInput' type='password' placeholder='Password' value='asdf1234'>
@@ -951,25 +951,27 @@ function handleAddEditReview(user, snack, userReview) {
 
 function handleSnackReview(e) {
   e.preventDefault()
+
   const snackId = window.location.hash.split('/')[2]
   const token = window.localStorage.getItem('token')
+
   const snackPromise = getSnack(snackId)
   const userPromise = userRequests.getUser(token)
-  Promise.all([snackPromise, userPromise]).then((result) => {
-    const [snack, { data: user }] = result
-    reviewsRequests.getAllForUser(user.id).then((reviewResult) => {
-      const { data: { reviews } } = reviewResult
-      const userReview = reviews.find(review => (
-        review.user_id === user.id && review.snack_id === snack.id))
-      if (userReview) {
-        mainContentDiv.innerHTML += addEditSnackReviewTemplate(snack, userReview)
-      } else {
-        mainContentDiv.innerHTML += addEditSnackReviewTemplate(snack)
-      }
-      document.getElementById(`add-review-${snack.id}`).addEventListener('submit', (ev) => {
-        ev.preventDefault()
-        handleAddEditReview(user, snack, userReview)
-      })
+  const reviewsPromise = reviewsRequests.getAllForSnack(snackId)
+
+  Promise.all([snackPromise, userPromise, reviewsPromise]).then((result) => {
+    const [snack, { data: user }, { data: { reviews } }] = result
+    const userReview = reviews.find(review => (
+      review.user_id === user.id && review.snack_id === snack.id))
+    if (userReview) {
+      mainContentDiv.innerHTML += addEditSnackReviewTemplate(snack, userReview)
+    } else {
+      mainContentDiv.innerHTML += addEditSnackReviewTemplate(snack)
+    }
+
+    document.getElementById(`add-review-${snack.id}`).addEventListener('submit', (ev) => {
+      ev.preventDefault()
+      handleAddEditReview(user, snack, userReview)
     })
   })
 }
