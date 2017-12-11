@@ -14,7 +14,7 @@ function userReviewTemplate(review) {
           <p class='strongP'>Review: </p><span>${review.text}</span>
         </div>
       </div>
-      <button class='btn btn-info btn-sm' id='delete-${review.id}'>Delete This Review</button>
+      <button class='btn btn-info btn-sm disabled' id='delete-${review.id}'>Delete This Review</button>
     </div>`
 }
 

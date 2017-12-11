@@ -764,7 +764,7 @@ function userReviewTemplate(review) {
           <p class='strongP'>Review: </p><span>${review.text}</span>
         </div>
       </div>
-      <button class='btn btn-info btn-sm' id='delete-${review.id}'>Delete This Review</button>
+      <button class='btn btn-info btn-sm disabled' id='delete-${review.id}'>Delete This Review</button>
     </div>`
 }
 
@@ -833,7 +833,7 @@ function viewOneUserTemplate(user, reviews) {
         <pclass='strongP'>${user.first_name} ${user.last_name}</p>
       </div>
       <div class='snackImg'>
-        <p>Replace with img of user</p>
+        <img src="https://picsum.photos/360?image=1027">
       </div>
       <div>
         <div class='inputLine'>

@@ -8,7 +8,7 @@ function viewOneUserTemplate(user, reviews) {
         <pclass='strongP'>${user.first_name} ${user.last_name}</p>
       </div>
       <div class='snackImg'>
-        <p>Replace with img of user</p>
+        <img src="https://picsum.photos/360?image=1027">
       </div>
       <div>
         <div class='inputLine'>
