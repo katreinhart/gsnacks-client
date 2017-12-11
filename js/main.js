@@ -15,12 +15,14 @@ const { getSnack, setupSnackButtons, setupEditSnackTemplateButtons } = require('
 const {
   getAll: getUsers,
   getUser: getMyInfo,
+  find: getUserInfo,
 } = require('./requests/users')
 
 const { getAllForUser: getUserReviews } = require('./requests/reviews')
 
 const { adminNavbarTemplate } = require('./templates/adminNavbar')
 const { allUsersTemplate } = require('./templates/allUsers')
+const { viewOneUserTemplate } = require('./templates/viewOneUser')
 const { setupAdminUsers } = require('./admin')
 
 const mainContentDiv = document.getElementById('main-content')
@@ -88,13 +90,18 @@ function showOneSnack() {
 }
 
 function showOneUser() {
+  const token = window.localStorage.getItem('token')
   navContentDiv.innerHTML = window.isAdmin
     ? adminNavbarTemplate()
     : navbarTemplate(window.isLoggedIn)
   const userId = window.location.href.split('/')[5]
-  getUserReviews(userId).then((result) => {
-    const { reviews } = result.data
-    mainContentDiv.innerHTML = viewUsersReviewsTemplate(reviews)
+
+  const userPromise = getUserInfo(userId, token)
+  const reviewsPromise = getUserReviews(userId)
+
+  Promise.all([userPromise, reviewsPromise]).then((result) => {
+    const [{ data: { users: user } }, { data: { reviews } }] = result
+    mainContentDiv.innerHTML = viewOneUserTemplate(user, reviews)
     toTop()
   })
 }
