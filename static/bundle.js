@@ -51,13 +51,12 @@ const reviewRequests = require('./requests/reviews')
 
 function averageSnackReview(snackId) {
   return reviewRequests.getAverageSnackReview(snackId)
-    .then(result => result.data[0])    
+    .then(result => result.data[0])
 }
-          
+
 module.exports = {
   averageSnackReview,
 }
-
 
 },{"./requests/reviews":8}],4:[function(require,module,exports){
 const baseURL = 'https://snack-team-deploy.herokuapp.com'
@@ -675,7 +674,7 @@ function addEditSnackReviewTemplate(snack, review) {
       <img src='${snack.img}' width=300 alt='a picture of ${snack.name}>
     </div>
     <div class='textInputs'>
-      <form id='review-snack'>
+      <form id='add-review-${snack.id}'>
         <div class='inputLine'>
           <p class='strongP'>ID Number: </p><span>${snack.id}</span>
         </div>
@@ -712,11 +711,12 @@ module.exports = {
 }
 
 },{}],19:[function(require,module,exports){
+
 function snackReviewTemplate(review) {
   return `<div class='container-fluid reviewBox'>
       <div>
         <div class='inputLine'>
-          <p class='strongP'>Name: </p><span>User's Name</span>
+          <p class='strongP'>Name: </p><span>${review.user_id}</span>
         </div>
         <div class='inputLine'>
           <p class='strongP'>Title: </p><span>${review.title}</span>
@@ -728,6 +728,7 @@ function snackReviewTemplate(review) {
           <p class='strongP'>Review: </p><span>${review.text}</span>
         </div>
       </div>
+      
     </div>`
 }
 
@@ -793,7 +794,6 @@ const userRequests = require('./requests/users')
 const { editOneSnackTemplate } = require('./templates/editSnack')
 const { addEditSnackReviewTemplate } = require('./templates/reviewSnack')
 const { viewOneSnackTemplate } = require('./templates/viewOneSnack')
-
 
 const { averageSnackReview } = require('./averageReview')
 
@@ -868,8 +868,7 @@ function setupSnackButtons() {
     document.getElementById(`delete-${snackId}`).addEventListener('click', (e) => {
       e.preventDefault()
       deleteSnackRequest(snackId, token).then((result) => {
-        console.log('snack deleted')
-        // display deleted confirm message?
+        window.location.hash = '#/snacks'
       }).catch(console.error)
     })
   }
@@ -878,22 +877,36 @@ function setupSnackButtons() {
       e.preventDefault()
       const snackPromise = getSnack(snackId)
       const userPromise = userRequests.getUser(token)
-
+      
       Promise.all([snackPromise, userPromise]).then((result) => {
         const [snack, { data: user }] = result
-        mainContentDiv.innerHTML += addEditSnackReviewTemplate(snack)
-        document.getElementById('review-snack').addEventListener('submit', (e) => {
-          e.preventDefault()
-          const snackReview = getSnackReviewFromForm()
-          console.log(snackReview)
-          snackReview.snack_id = snackId
-          snackReview.user_id = user.id
-
-          reviewsRequests.create(snackReview, token).then((response) => {
-            // display success message
-            // display updated snack review 
-            console.log(response)
-            mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+        reviewsRequests.getAllForUser(user.id).then((reviewResult) => {
+          const { data: { reviews } } = reviewResult
+          const userReview = reviews.find(review => (review.user_id === user.id && review.snack_id === snack.id))
+          if (userReview) {
+            mainContentDiv.innerHTML += addEditSnackReviewTemplate(snack, userReview)
+          } else {
+            mainContentDiv.innerHTML += addEditSnackReviewTemplate(snack)
+          }
+          document.getElementById(`add-review-${snack.id}`).addEventListener('submit', (ev) => {
+            ev.preventDefault()
+            const snackReview = getSnackReviewFromForm()
+            snackReview.snack_id = snackId
+            snackReview.user_id = user.id
+            if (userReview) {
+              reviewsRequests.update(userReview.id, snackReview, token).then((response) => {
+                reviewsRequests.getAllForSnack(snackId).then((snackReviews) => {
+                  const { data: { reviews: newReviews } } = snackReviews
+                  snack.reviews = newReviews
+                  mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+                })
+              })
+            } else {
+              reviewsRequests.create(snackReview, token).then((response) => {
+                snack.reviews.push(snackReview)
+                mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
+              }).catch(console.error)
+            }
           })
         })
       })

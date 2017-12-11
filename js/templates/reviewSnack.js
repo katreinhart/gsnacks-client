@@ -18,7 +18,7 @@ function addEditSnackReviewTemplate(snack, review) {
       <img src='${snack.img}' width=300 alt='a picture of ${snack.name}>
     </div>
     <div class='textInputs'>
-      <form id='review-snack'>
+      <form id='add-review-${snack.id}'>
         <div class='inputLine'>
           <p class='strongP'>ID Number: </p><span>${snack.id}</span>
         </div>

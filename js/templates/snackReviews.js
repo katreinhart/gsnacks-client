@@ -1,8 +1,9 @@
+
 function snackReviewTemplate(review) {
   return `<div class='container-fluid reviewBox'>
       <div>
         <div class='inputLine'>
-          <p class='strongP'>Name: </p><span>User's Name</span>
+          <p class='strongP'>Name: </p><span>${review.user_id}</span>
         </div>
         <div class='inputLine'>
           <p class='strongP'>Title: </p><span>${review.title}</span>
@@ -14,6 +15,7 @@ function snackReviewTemplate(review) {
           <p class='strongP'>Review: </p><span>${review.text}</span>
         </div>
       </div>
+      
     </div>`
 }
 
