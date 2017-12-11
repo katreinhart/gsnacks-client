@@ -668,14 +668,14 @@ function addEditSnackReviewTemplate(snack, review) {
     }
   }
   return `
-  <div class='container-fluid infoBox'>
+  <div class='container-fluid reviewBox'>
     <div class='title'>
       <div class='inputLine'>
         <p class='strongP'>Review ${snack.name}</p>
       </div>
     </div>
     <div class='snackImg'>
-      <img src='${snack.img}' width=300 alt='a picture of ${snack.name}>
+      <img src='${snack.img}' width=300 alt='a picture of ${snack.name}'>
     </div>
     <div class='textInputs'>
       <form id='add-review-${snack.id}'>
@@ -704,7 +704,7 @@ function addEditSnackReviewTemplate(snack, review) {
         <div class='inputLine'>
           <p class='strongP'>Review: </p><input class='formInput' id='review-text' type='text' placeholder='Tastes great!' value='${review.text}'>
         </div>
-        <input type='submit' value='Submit Review!'>
+        <input type='submit' value='Submit Review!' class='submitButton'>
       </form>
     </div>
   </div>`
