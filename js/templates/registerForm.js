@@ -8,13 +8,13 @@ function registerTemplate() {
       </div>
       <form id='signupForm'>
         <div class='inputLine'>
-          <p>First Name: </p><input class='formInput' type='text' placeholder='First Name' value='Kat'>
+          <p>First Name: </p><input class='formInput' type='text' placeholder='First Name' value='Kyle'>
         </div>
         <div class='inputLine'>
         <p>Last Name: </p><input class='formInput' type='text' placeholder='Last Name' value='Example'>
       </div>
         <div class='inputLine'>
-          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='kat@example.com'>
+          <p>Email: </p><input class='formInput' type='email' placeholder='Email Address' value='kyle@example.com'>
         </div>
         <blockquote id='used-email-error' class="blockquote bq-danger hidden">
             <small class='danger'>That email is already taken.</small>

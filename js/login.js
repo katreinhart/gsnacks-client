@@ -11,6 +11,7 @@ function processLoginForm(e) {
       userRequests.getUser(result.data.token).then((user) => {
         if (user.data.admin) {
           window.location.href = '#/admin'
+          window.isAdmin = true
         } else {
           window.location.href = '#/snacks'
         }
