@@ -607,9 +607,7 @@ function navbarTemplate(loggedIn) {
                 <li class="nav-item">
                     <a class="nav-link" href="#/snacks">All Snacks</a>
                 </li>
-                ${loggedIn ? `<li class="nav-item">
-                    <a class="nav-link" href="#/user/reviews">My Reviews</a>
-                </li>` : ``}
+                
             </ul>
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
