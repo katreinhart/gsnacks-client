@@ -121,7 +121,7 @@ function handleDeleteSnack(e) {
   }).catch(console.error)
 }
 
-function handleEditSnackClick (e) {
+function handleEditSnackClick(e) {
   e.preventDefault()
   const snackId = window.location.hash.split('/')[2]
   getSnack(snackId).then((snack) => {
