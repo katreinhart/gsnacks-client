@@ -416,9 +416,9 @@ function adminNavbarTemplate() {
                 <li class="nav-item">
                     <a class="nav-link" href="#/snacks">All Snacks</a>
                 </li>
-                <li class="nav-item">
+                <!--<li class="nav-item">
                     <a class="nav-link" href="#/user">My Reviews</a>
-                </li>
+                </li>-->
                 <li class="nav-item">
                     <a class="nav-link" href="#/snacks/new">Add Snack</a>
                 </li>
