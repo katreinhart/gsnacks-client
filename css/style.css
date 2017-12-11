@@ -29,7 +29,7 @@ a {
     background-color: #FFFFFF;
 }
 
-.signupBox, .loginBox, .infoBox  {
+.signupBox, .loginBox, .infoBox, .reviewBox  {
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     padding: 30px;
 }
