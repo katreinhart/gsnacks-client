@@ -98,7 +98,8 @@ function handleSnackReview(e) {
     const [snack, { data: user }] = result
     reviewsRequests.getAllForUser(user.id).then((reviewResult) => {
       const { data: { reviews } } = reviewResult
-      const userReview = reviews.find(review => (review.user_id === user.id && review.snack_id === snack.id))
+      const userReview = reviews.find(review => (
+        review.user_id === user.id && review.snack_id === snack.id))
       if (userReview) {
         mainContentDiv.innerHTML += addEditSnackReviewTemplate(snack, userReview)
       } else {

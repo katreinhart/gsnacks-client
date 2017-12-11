@@ -165,7 +165,9 @@ function setupRegister() {
 }
 
 function showSnacks() {
-  navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
+  navContentDiv.innerHTML = window.isAdmin
+    ? adminNavbarTemplate()
+    : navbarTemplate(window.isLoggedIn)
   window.location.href = '#/snacks'
   setupSnacks().then((snacks) => {
     mainContentDiv.innerHTML = allSnacksTemplate(snacks)
@@ -174,27 +176,29 @@ function showSnacks() {
 }
 
 function showOneSnack() {
-  navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
+  navContentDiv.innerHTML = window.isAdmin
+    ? adminNavbarTemplate()
+    : navbarTemplate(window.isLoggedIn)
   const snackId = window.location.href.split('/')[5]
   if (snackId === 'new') {
-    console.log('add a new snack')
     mainContentDiv.innerHTML = editOneSnackTemplate()
     setupEditSnackTemplateButtons()
   } else {
     getSnack(snackId).then((snack) => {
       mainContentDiv.innerHTML = viewOneSnackTemplate(snack)
-      setupSnackButtons() 
+      setupSnackButtons()
     })
   }
 }
 
 function showOneUser() {
-  navContentDiv.innerHTML = window.isAdmin? adminNavbarTemplate() : navbarTemplate(window.isLoggedIn)
+  navContentDiv.innerHTML = window.isAdmin
+    ? adminNavbarTemplate()
+    : navbarTemplate(window.isLoggedIn)
   const userId = window.location.href.split('/')[5]
   getUserReviews(userId).then((result) => {
     const { reviews } = result.data
-    console.log(reviews)
-    // mainContentDiv.innerHTML = viewUsersReviewsTemplate(reviews)
+    mainContentDiv.innerHTML = viewUsersReviewsTemplate(reviews)
     toTop()
   })
 }
@@ -887,7 +891,8 @@ function handleSnackReview(e) {
     const [snack, { data: user }] = result
     reviewsRequests.getAllForUser(user.id).then((reviewResult) => {
       const { data: { reviews } } = reviewResult
-      const userReview = reviews.find(review => (review.user_id === user.id && review.snack_id === snack.id))
+      const userReview = reviews.find(review => (
+        review.user_id === user.id && review.snack_id === snack.id))
       if (userReview) {
         mainContentDiv.innerHTML += addEditSnackReviewTemplate(snack, userReview)
       } else {
