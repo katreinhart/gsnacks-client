@@ -19,14 +19,12 @@ const mainContentDiv = document.getElementById('main-content')
 function getSnack(id) {
   const snackReviewPromise = reviewsRequests.getAllForSnack(id)
   const snackPromise = snackRequests.find(id)
-
-  return Promise.all([snackReviewPromise, snackPromise]).then((result) => {
-    const [{ data: snackReviews }, { data: { snacks } }] = result
-    return averageSnackReview(id).then((average) => {
-      snacks.reviews = snackReviews.reviews
-      snacks.averageRating = parseFloat(average.avg)
-      return snacks
-    })
+  const averagePromise = averageSnackReview(id)
+  return Promise.all([snackReviewPromise, snackPromise, averagePromise]).then((result) => {
+    const [{ data: snackReviews }, { data: { snacks } }, { avg: average }] = result
+    snacks.reviews = snackReviews.reviews
+    snacks.averageRating = parseFloat(average)
+    return snacks
   })
 }
 

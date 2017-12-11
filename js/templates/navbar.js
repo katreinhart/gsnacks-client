@@ -1,10 +1,10 @@
 function navbarTemplate(loggedIn) {
-    let logLink
-    if(loggedIn) {
-        logLink = `<a class="nav-link loginLink" id="loginLink" href='#/logout'>Log Out</i></a>`
-    } else {
-        logLink = `<a class='nav-link loginLink' id='loginLink' href='#/login'>Log In</i></a>`
-    }
+  let logLink
+  if (loggedIn) {
+    logLink = '<a class="nav-link loginLink" id="loginLink" href="#/logout">Log Out</i></a>'
+  } else {
+    logLink = '<a class="nav-link loginLink" id="loginLink" href="#/login">Log In</i></a>'
+  }
   return `
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-grey scrolling-navbar">
         <a class="navbar-brand" href="#"><strong>Galvanize Snacks</strong></a>
@@ -27,7 +27,7 @@ function navbarTemplate(loggedIn) {
                 </li>
                 ${!loggedIn ? `<li class="nav-item">
                     <a class="nav-link" href="#/register">Register</a>
-                </li>` : ``}
+                </li>` : ''}
             </ul>
         </div>
     </nav>
