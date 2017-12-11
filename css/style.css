@@ -36,8 +36,9 @@ a {
 
 .reviewBox {
     width: 600px;
-    background-color: #AAAAAA;
+    background-color: #999999;
     margin-top: 25px;
+    margin-bottom: 25px;
 }
 
 .row {
@@ -86,4 +87,8 @@ a {
 
 img {
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.submitButton{
+    margin-top: 10px;
 }
